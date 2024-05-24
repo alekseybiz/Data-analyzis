@@ -3,7 +3,7 @@ import pandas as pd
 df = pd.read_csv('animal.csv')
 print(df)
 
-# df.fillna(0, inplace=True)
+df.fillna(0, inplace=True)
 # df.dropna(inplace=True)
 df.drop(7, axis=0, inplace=True)
 print(df)
