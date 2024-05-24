@@ -8,4 +8,4 @@ data = {
 
 df = pd.DataFrame(data)
 print(df)
-df.to_csv('out2.xls', index=False)
+df.to_csv('out2.csv', index=False)
