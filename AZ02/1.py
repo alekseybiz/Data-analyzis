@@ -6,7 +6,7 @@ data = {
     'набор Б': [70, 80, 95, 110, 1200]
 }
 df = pd.DataFrame(data)
-
+print(df)
 stdA = df['набор А'].std()
 stdB = df['набор Б'].std()
 
