@@ -8,12 +8,18 @@ df = pd.read_csv('sources_prices.csv')
 
 url = "https://www.plitkanadom.ru/collections/rossiiskaya-plitka/azori/eclipse/azori-eclipse-indigo-nastennaya-plitka-50-5x20-1"
 response = requests.get(url)
+print(url)
+print(response.ok)
 soup = BeautifulSoup(response.content, "html.parser")
 price = soup.find('span', class_='new-price')
 print(price.text)
 
-url = "https://leroymerlin.ru/product/plitka-nastennaya-azori-eclipse-indigo-201x505-sinyaya-152m2-90430676/"
+url = "https://leroymerlin.ru"
 response = requests.get(url)
+print(url)
+print(response.status_code)
+print(response.ok)
+print(response.text)
    #print(response.text)
 soup = BeautifulSoup(response.content, "html.parser")
 # price_tag = soup.find('div', class_='p7uw7j7_pdp.primary-price.p1p5g0yu_pdp')
@@ -25,9 +31,12 @@ print(price_tag)
 
 url = "https://santehnika-online.ru/product/plitka_nastennaya_azori_eclipse_indigo_glyantsevaya/351699/"
 response = requests.get(url)
+print(url)
+print(response.status_code)
+print(response.ok)
 soup = BeautifulSoup(response.content, "html.parser")
-# price = soup.find('span', class_='b-price__price-core')
-# print(price.text)
+price = soup.find('span', class_='b-price__price-core')
+print(price)
 
-price = soup.find('div', class_='b-price__price.b-price__price--main')
-print(price.text)
+# price = soup.find('div', class_='b-price__price.b-price__price--main')
+# print(price.text)
