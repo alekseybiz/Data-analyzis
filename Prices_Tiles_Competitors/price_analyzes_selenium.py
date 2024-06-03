@@ -1,32 +1,40 @@
 import pandas as pd
 from selenium import webdriver
-import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-# import requests
 
 df = pd.read_csv('sources_prices.csv')
+num_columns = len(df.columns)
+print(f'Количество столбцов в файле CSV: {num_columns}')
+num_rows = df.shape[0]
+print(f'Число строк в DataFrame: {num_rows}')
 browser = webdriver.Chrome()
 
-# №1
-url = "https://www.plitkanadom.ru/collections/rossiiskaya-plitka/azori/eclipse/azori-eclipse-indigo-nastennaya-plitka-50-5x20-1"
-browser.get(url)
-# Явное ожидание появления элемента
-element = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'span.new-price')))
-price = element.text
-print(url)
-print(price)
-# browser.quit()
+for col in range(1, num_columns):
+    print(col)
+    tag = df.iloc[0, col]
+    name = df.iloc[2, col]
+    tag_name = tag + "." + name
 
-# №2
-url = "https://santehnika-online.ru/product/plitka_nastennaya_azori_eclipse_indigo_glyantsevaya/351699/"
-browser.get(url)
-# Явное ожидание появления элемента
-element = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'span.b-price__price-core')))
-price = element.text
-print(url)
-print(price)
+    for row in range(4, num_rows):
+        print(row)
+        # row = 4
+        item_name = df.iloc[row, 0]
+        print(item_name)
+        url = df.iloc[row, col]
+        browser.get(url)
+        # Явное ожидание появления элемента
+        element = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, tag_name)))
+        price = element.text
+        print(url)
+        print(price)
+        df.iloc[row_index, column_index] = price
+        # Сохранение DataFrame в CSV файл
+        df.to_csv('sources_prices_updated.csv', index=False)
+
+browser.quit()
+
 
 
 
