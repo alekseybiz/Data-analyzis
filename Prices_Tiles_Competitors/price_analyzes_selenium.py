@@ -29,9 +29,7 @@ for col in range(1, num_columns):
         price = element.text
         print(url)
         print(price)
-        df.iloc[row_index, column_index] = price
-        # Сохранение DataFrame в CSV файл
-        df.to_csv('sources_prices_updated.csv', index=False)
+
 
 browser.quit()
 
