@@ -1,4 +1,5 @@
-params,https://www.plitkanadom.ru,https://leroymerlin.ru,https://santehnika-online.ru
-tag,span,,
-class,new-price ,,
+Параметры,https://www.plitkanadom.ru,https://leroymerlin.ru,https://santehnika-online.ru
+tag,span,div,span
+attribute,class,data-qa,class
+name_attr,new-price ,price-view,b-price__price-core
 "Плитка Azori Eclipse Indigo Настенная плитка 50,5x20,1 см",https://www.plitkanadom.ru/collections/rossiiskaya-plitka/azori/eclipse/azori-eclipse-indigo-nastennaya-plitka-50-5x20-1,https://leroymerlin.ru/product/plitka-nastennaya-azori-eclipse-indigo-201x505-sinyaya-152m2-90430676/,https://santehnika-online.ru/product/plitka_nastennaya_azori_eclipse_indigo_glyantsevaya/351699/
