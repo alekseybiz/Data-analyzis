@@ -14,19 +14,25 @@ browser = webdriver.Chrome()
 for col in range(1, num_columns):
     print(col)
     tag = df.iloc[0, col]
-    name = df.iloc[2, col]
+    name = df.iloc[1, col]
     tag_name = tag + "." + name
 
-    for row in range(3, num_rows):
+    for row in range(2, num_rows):
         print(row)
         # row = 3
         item_name = df.iloc[row, 0]
         print(item_name)
         url = df.iloc[row, col]
-        browser.get(url)
-        # Явное ожидание появления элемента
-        element = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, tag_name)))
-        price = element.text
+
+        try:
+            browser.get(url)
+            # Явное ожидание появления элемента
+            element = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, tag_name)))
+            price = element.text
+        except Exception as e:
+            # Обработка любого исключения
+            print("Произошла ошибка:", e)
+            price = False
         print(url)
         print(price)
         df.iloc[row, col] = price
