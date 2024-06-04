@@ -17,9 +17,9 @@ for col in range(1, num_columns):
     name = df.iloc[2, col]
     tag_name = tag + "." + name
 
-    for row in range(4, num_rows):
+    for row in range(3, num_rows):
         print(row)
-        # row = 4
+        # row = 3
         item_name = df.iloc[row, 0]
         print(item_name)
         url = df.iloc[row, col]
