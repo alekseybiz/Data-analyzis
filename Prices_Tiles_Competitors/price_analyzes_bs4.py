@@ -29,7 +29,7 @@ print(price.text)
 # price = price_tag.get_text().replace('\xa0', '')
 # print(price)
 
-url = "https://santehnika-online.ru/product/plitka_nastennaya_azori_eclipse_indigo_glyantsevaya/351699/"
+url = "https://santehnika-online.ru/product/plitka_nastennaya_equipe_artisan_white_glyantsevaya_6_5x20/374411/"
 response = requests.get(url)
 print(url)
 print(response.status_code)

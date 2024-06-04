@@ -29,8 +29,10 @@ for col in range(1, num_columns):
         price = element.text
         print(url)
         print(price)
+        df.iloc[row, col] = price
 
-
+# print(df)
+df.to_csv('out_prices.csv', index=False)
 browser.quit()
 
 
