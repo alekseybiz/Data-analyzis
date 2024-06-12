@@ -1,8 +1,5 @@
-Параметры,https://www.plitkanadom.ru,https://santehnika-online.ru,https://www.keramogranit.ru/,https://otdelkino.ru/,https://plitka-sdvk.ru/,https://3dplitka.ru/
-tag,span,span,span,div,div,p
-name_attr,new-price ,b-price__price-core,cat-price__cur ,page-detail__price-value,b-item-price-block__actual-price,card-price
-"Azori Eclipse Indigo Настенная плитка 50,5x20,1 см",926 руб. /кв. м.,1 230 ₽,False,False,False,False
-"Equipe Artisan 24464 White Настенная плитка 6,5х20 см",5094.01 /кв. м.,5 156 ₽,5 363,False,False,False
-"Керамин Брайт 4 Зеленая Глянцевая Настенная плитка 7,75х27,5 см",1 557 руб. /кв. м.,False,False,False,False,False
-Керамин Канон 1Д Серая Матовая Настенная плитка 30х90 см,1 052 руб. /кв. м.,False,False,1 789 руб./м2,1789 руб./м2,"Цена
-1 789 руб./м²"
+Параметры,https://www.plitkanadom.ru,https://santehnika-online.ru,https://www.keramogranit.ru/
+tag,span,span,span
+name_attr,new-price ,b-price__price-core,cat-price__cur 
+"Azori Eclipse Indigo Настенная плитка 50,5x20,1 см",926 руб. /кв. м.,1 230 ₽,False
+"Equipe Artisan 24464 White Настенная плитка 6,5х20 см",False,5 270 ₽,5 363
