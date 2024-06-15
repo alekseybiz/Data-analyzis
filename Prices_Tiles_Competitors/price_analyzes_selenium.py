@@ -29,7 +29,7 @@ for col in range(1, num_columns):
         try:
             browser.get(url)
             # Явное ожидание появления элемента
-            element = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, tag_name)))
+            element = WebDriverWait(browser, 12).until(EC.presence_of_element_located((By.CSS_SELECTOR, tag_name)))
             price = element.text
         except Exception as e:
             # Обработка любого исключения
