@@ -12,19 +12,6 @@ num_rows = df.shape[0]
 print(f'Число строк в DataFrame: {num_rows}')
 browser = webdriver.Chrome()
 
-# for col in range(1, 10): #for col in range(1, num_columns):
-#     print(f'Колонка: {col}')
-#     tag = df.iloc[0, col]
-#     name = df.iloc[1, col]
-#     tag_name = tag + "." + name
-#     print(f'Используемый тег: {tag_name}')
-#     # print(tag_name)
-#
-#     for row in range(2, num_rows): #for row in range(2, num_rows):
-#         print(f'Ряд: {row}')
-#         item_name = df.iloc[row, 0]
-#         print(f'Товар: {item_name}')
-#         url = df.iloc[row, col]
 for row in range(0, 10): #for row in range(2, num_rows):
     print(f'Ряд: {row}')
     tag = df.iloc[row, 1]
