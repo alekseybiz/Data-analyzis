@@ -4,7 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-df = pd.read_csv('sources_prices.csv')
+df = pd.read_csv('old/sources_prices.csv')
 num_columns = len(df.columns)
 print(f'Количество столбцов в файле CSV: {num_columns}')
 num_rows = df.shape[0]
