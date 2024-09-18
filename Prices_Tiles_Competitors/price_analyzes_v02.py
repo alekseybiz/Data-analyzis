@@ -12,19 +12,32 @@ num_rows = df.shape[0]
 print(f'Число строк в DataFrame: {num_rows}')
 browser = webdriver.Chrome()
 
-for col in range(1, 10): #for col in range(1, num_columns):
-    print(f'Колонка: {col}')
-    tag = df.iloc[0, col]
-    name = df.iloc[1, col]
+# for col in range(1, 10): #for col in range(1, num_columns):
+#     print(f'Колонка: {col}')
+#     tag = df.iloc[0, col]
+#     name = df.iloc[1, col]
+#     tag_name = tag + "." + name
+#     print(f'Используемый тег: {tag_name}')
+#     # print(tag_name)
+#
+#     for row in range(2, num_rows): #for row in range(2, num_rows):
+#         print(f'Ряд: {row}')
+#         item_name = df.iloc[row, 0]
+#         print(f'Товар: {item_name}')
+#         url = df.iloc[row, col]
+for row in range(0, 10): #for row in range(2, num_rows):
+    print(f'Ряд: {row}')
+    tag = df.iloc[row, 1]
+    name = df.iloc[row, 2]
     tag_name = tag + "." + name
     print(f'Используемый тег: {tag_name}')
-    # print(tag_name)
 
-    for row in range(2, num_rows): #for row in range(2, num_rows):
-        print(f'Ряд: {row}')
-        item_name = df.iloc[row, 0]
-        print(f'Товар: {item_name}')
+    for col in range(3, num_columns): #for col in range(1, num_columns):
+        print(f'Ряд: {row}; Колонка: {col}')
+        # item_name = df.iloc[0, col]
+        # print(f'Товар: {item_name}')
         url = df.iloc[row, col]
+        # print(url)
 
         try:
             browser.get(url)
@@ -39,18 +52,13 @@ for col in range(1, 10): #for col in range(1, num_columns):
         print(price)
         df.iloc[row, col] = price
 
-# print(df)
 try:
     df.to_excel('Prices_xlsx.xlsx', index=False, engine='openpyxl')
     print("Данные успешно сохранены в файл 'Prices_xls.xlsx'")
 except:
     print("Ошибка записи в файл 'Prices_xlsx.xlsx' - не открыт ли файл?")
 
-# try:
-#     df.to_csv('out_prices.csv', index=False)
-#     print("Данные успешно сохранены в файл 'out_prices.csv'")
-# except:
-#     print("Ошибка записи в файл 'out_prices.csv' - не открыт ли файл?")
+
 
 #Если не получается парсинг, то пробуем вручную:
 # tag_name = "p.card-price"
