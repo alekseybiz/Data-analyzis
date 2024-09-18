@@ -3,6 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import openpyxl
 
 df = pd.read_csv('sources_prices.csv')
 num_columns = len(df.columns)
@@ -11,7 +12,7 @@ num_rows = df.shape[0]
 print(f'Число строк в DataFrame: {num_rows}')
 browser = webdriver.Chrome()
 
-for col in range(1, num_columns):
+for col in range(1, 2): #for col in range(1, num_columns):
     print(f'Колонка: {col}')
     tag = df.iloc[0, col]
     name = df.iloc[1, col]
@@ -19,7 +20,7 @@ for col in range(1, num_columns):
     print(f'Используемый тег: {tag_name}')
     # print(tag_name)
 
-    for row in range(2, num_rows):
+    for row in range(2, 3): #for row in range(2, num_rows):
         print(f'Ряд: {row}')
         # row = 3
         item_name = df.iloc[row, 0]
@@ -40,11 +41,16 @@ for col in range(1, num_columns):
         df.iloc[row, col] = price
 
 # print(df)
-df.to_csv('out_prices.csv', index=False)
-df.to_excel('Prices_xls.xlsx', index=False, engine='openpyxl')
+try:
+    df.to_csv('out_prices.csv', index=False)
+except:
+    print("Ошибка записи в файл 'out_prices.csv' - не открыт ли файл?")
 
-print("Данные успешно сохранены в файл 'Prices_xls.xlsx'")
-
+try:
+    df.to_excel('Prices_xls.xlsx', index=False, engine='openpyxl')
+    print("Данные успешно сохранены в файл 'Prices_xls.xlsx'")
+except:
+    print("Ошибка записи в файл 'Prices_xls.xlsx' - не открыт ли файл?")
 #Если не получается парсинг, то пробуем вручную:
 # tag_name = "p.card-price"
 # url = 'https://3dplitka.ru/product-869368/'
