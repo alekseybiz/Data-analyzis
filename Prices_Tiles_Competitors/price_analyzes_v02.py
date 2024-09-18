@@ -5,14 +5,14 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import openpyxl
 
-df = pd.read_excel('sources_xls.xls', engine='openpyxl')
+df = pd.read_excel('sources_xlsx.xlsx', engine='openpyxl')
 num_columns = len(df.columns)
 print(f'Количество столбцов в файле CSV: {num_columns}')
 num_rows = df.shape[0]
 print(f'Число строк в DataFrame: {num_rows}')
 browser = webdriver.Chrome()
 
-for col in range(1, 4): #for col in range(1, num_columns):
+for col in range(1, 10): #for col in range(1, num_columns):
     print(f'Колонка: {col}')
     tag = df.iloc[0, col]
     name = df.iloc[1, col]
@@ -20,9 +20,8 @@ for col in range(1, 4): #for col in range(1, num_columns):
     print(f'Используемый тег: {tag_name}')
     # print(tag_name)
 
-    for row in range(2, 4): #for row in range(2, num_rows):
+    for row in range(2, num_rows): #for row in range(2, num_rows):
         print(f'Ряд: {row}')
-        # row = 3
         item_name = df.iloc[row, 0]
         print(f'Товар: {item_name}')
         url = df.iloc[row, col]
@@ -42,16 +41,17 @@ for col in range(1, 4): #for col in range(1, num_columns):
 
 # print(df)
 try:
-    df.to_csv('out_prices.csv', index=False)
-    print("Данные успешно сохранены в файл 'out_prices.csv'")
-except:
-    print("Ошибка записи в файл 'out_prices.csv' - не открыт ли файл?")
-
-try:
-    df.to_excel('Prices_xls.xlsx', index=False, engine='openpyxl')
+    df.to_excel('Prices_xlsx.xlsx', index=False, engine='openpyxl')
     print("Данные успешно сохранены в файл 'Prices_xls.xlsx'")
 except:
-    print("Ошибка записи в файл 'Prices_xls.xlsx' - не открыт ли файл?")
+    print("Ошибка записи в файл 'Prices_xlsx.xlsx' - не открыт ли файл?")
+
+# try:
+#     df.to_csv('out_prices.csv', index=False)
+#     print("Данные успешно сохранены в файл 'out_prices.csv'")
+# except:
+#     print("Ошибка записи в файл 'out_prices.csv' - не открыт ли файл?")
+
 #Если не получается парсинг, то пробуем вручную:
 # tag_name = "p.card-price"
 # url = 'https://3dplitka.ru/product-869368/'
