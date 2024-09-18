@@ -5,14 +5,14 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import openpyxl
 
-df = pd.read_csv('sources_prices.csv')
+df = pd.read_excel('sources_xls.xls', engine='openpyxl')
 num_columns = len(df.columns)
 print(f'Количество столбцов в файле CSV: {num_columns}')
 num_rows = df.shape[0]
 print(f'Число строк в DataFrame: {num_rows}')
 browser = webdriver.Chrome()
 
-for col in range(1, 2): #for col in range(1, num_columns):
+for col in range(1, 4): #for col in range(1, num_columns):
     print(f'Колонка: {col}')
     tag = df.iloc[0, col]
     name = df.iloc[1, col]
@@ -20,7 +20,7 @@ for col in range(1, 2): #for col in range(1, num_columns):
     print(f'Используемый тег: {tag_name}')
     # print(tag_name)
 
-    for row in range(2, 3): #for row in range(2, num_rows):
+    for row in range(2, 4): #for row in range(2, num_rows):
         print(f'Ряд: {row}')
         # row = 3
         item_name = df.iloc[row, 0]
