@@ -43,6 +43,7 @@ for col in range(1, 2): #for col in range(1, num_columns):
 # print(df)
 try:
     df.to_csv('out_prices.csv', index=False)
+    print("Данные успешно сохранены в файл 'out_prices.csv'")
 except:
     print("Ошибка записи в файл 'out_prices.csv' - не открыт ли файл?")
 
