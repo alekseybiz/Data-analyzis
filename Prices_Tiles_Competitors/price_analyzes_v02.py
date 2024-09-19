@@ -3,6 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
 import openpyxl
 
 df = pd.read_excel('sources_xlsx.xlsx', engine='openpyxl')
@@ -10,7 +11,12 @@ num_columns = len(df.columns)
 print(f'Количество столбцов в файле CSV: {num_columns}')
 num_rows = df.shape[0]
 print(f'Число строк в DataFrame: {num_rows}')
-browser = webdriver.Chrome()
+# browser = webdriver.Chrome()
+
+chrome_options = Options()
+chrome_options.add_argument("--verbose")
+
+browser = webdriver.Chrome(options=chrome_options)
 
 for row in range(0, num_rows): #for row in range(0, num_rows):
     print(f'Ряд: {row}')
@@ -29,14 +35,14 @@ for row in range(0, num_rows): #for row in range(0, num_rows):
         try:
             browser.get(url)
             # Явное ожидание появления элемента
-            element = WebDriverWait(browser, 12).until(EC.presence_of_element_located((By.CSS_SELECTOR, tag_name)))
+            element = WebDriverWait(browser, 15).until(EC.visibility_of_element_located((By.CSS_SELECTOR, tag_name)))
+            print("Элемент найден")
             price = element.text
         except Exception as e:
-            # Обработка любого исключения
-            print("Произошла ошибка:", e)
+            print(f"Произошла ошибка при поиске элемента: {type(e).__name__}: {e}")
             price = False
         print(url)
-        print(price)
+        print(f"Получена цена: {price}")
         df.iloc[row, col] = price
 
 try:
@@ -44,7 +50,6 @@ try:
     print("Данные успешно сохранены в файл 'Prices_xls.xlsx'")
 except:
     print("Ошибка записи в файл 'Prices_xlsx.xlsx' - не открыт ли файл?")
-
 
 
 #Если не получается парсинг, то пробуем вручную:
