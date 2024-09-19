@@ -24,7 +24,7 @@ for row in range(0, 10): #for row in range(2, num_rows):
         # item_name = df.iloc[0, col]
         # print(f'Товар: {item_name}')
         url = df.iloc[row, col]
-        # print(url)
+
 
         try:
             browser.get(url)
