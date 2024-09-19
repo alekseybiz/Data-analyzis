@@ -1,4 +1,4 @@
-import pandas as pd
+# import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -10,9 +10,10 @@ import openpyxl
 
 chrome_options = Options()
 chrome_options.add_argument("--verbose")  # Включение детализированных логов
-service = Service(executable_path='chromedriver.exe', log_path='chromedriver.log')
+# service = Service(executable_path='chromedriver.exe', log_path='chromedriver.log')
+# browser = webdriver.Chrome(service=service, options=chrome_options)
 
-browser = webdriver.Chrome(service=service, options=chrome_options)
+browser = webdriver.Chrome()
 
 ## Если не получается парсинг, то пробуем вручную:
 tag_name = "div.goods-card__price-text" # Введите через точку тег и атрибут тега
