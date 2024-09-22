@@ -27,7 +27,7 @@ chrome_options.add_argument("--verbose")
 
 browser = webdriver.Chrome(options=chrome_options)
 
-for row in range(1, 2): #for row in range(1, num_rows):
+for row in range(1, num_rows): #for row in range(1, num_rows):
     print(f'Ряд: {row}')
     tag = df.iloc[row, 1]
     name = df.iloc[row, 2]
@@ -46,8 +46,8 @@ for row in range(1, 2): #for row in range(1, num_rows):
             browser.get(url)
             # Явное ожидание появления элемента
             element = WebDriverWait(browser, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR, tag_name)))
-            print("Элемент найден")
             price = element.text
+            print(f"Элемент найден, цена: {price}")
         except Exception as e:
             print(f"Произошла ошибка при поиске элемента: {type(e).__name__}: {e}")
             price = ""  # Присваиваем пустую строку вместо False
@@ -60,6 +60,10 @@ for row in range(1, 2): #for row in range(1, num_rows):
             df.iloc[row, col] = extracted_price
         else:
             df.iloc[row, col] = 0.0  # Или любое другое значение, если price не строка
+
+        natsenka = (extracted_price / zakup - 1) * 100
+        print(f"Наценка: {natsenka}")
+        df.iloc[row, col+1] = natsenka
 
 df = df.drop(df.columns[[1, 2]], axis=1)  # Удаляет колонки с индексами 1 и 2
 
