@@ -45,6 +45,8 @@ for row in range(0, num_rows): #for row in range(0, num_rows):
         print(f"Получена цена: {price}")
         df.iloc[row, col] = price
 
+df = df.drop(df.columns[[1, 2]], axis=1)  # Удаляет колонки с индексами 1 и 2
+
 try:
     df.to_excel('Prices_xlsx.xlsx', index=False, engine='openpyxl')
     print("Данные успешно сохранены в файл 'Prices_xls.xlsx'")
