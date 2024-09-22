@@ -19,7 +19,7 @@ print("Страница загружена")
 
 try:
     # Увеличьте время ожидания или используйте visibility
-    element = WebDriverWait(browser, 15).until(EC.visibility_of_element_located((By.CSS_SELECTOR, tag_name)))
+    element = WebDriverWait(browser, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR, tag_name)))
     print("Элемент найден")
     price = element.text
 except Exception as e:
