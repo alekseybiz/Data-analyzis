@@ -35,7 +35,7 @@ for row in range(0, num_rows): #for row in range(0, num_rows):
         try:
             browser.get(url)
             # Явное ожидание появления элемента
-            element = WebDriverWait(browser, 15).until(EC.visibility_of_element_located((By.CSS_SELECTOR, tag_name)))
+            element = WebDriverWait(browser, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR, tag_name)))
             print("Элемент найден")
             price = element.text
         except Exception as e:
@@ -51,15 +51,6 @@ try:
 except:
     print("Ошибка записи в файл 'Prices_xlsx.xlsx' - не открыт ли файл?")
 
-
-#Если не получается парсинг, то пробуем вручную:
-# tag_name = "p.card-price"
-# url = 'https://3dplitka.ru/product-869368/'
-# browser.get(url)
-# element = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, tag_name)))
-# # price = element.get_attribute('textContent')
-# price = element.text
-# print(price)
 
 browser.quit()
 
