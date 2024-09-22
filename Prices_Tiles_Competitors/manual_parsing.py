@@ -11,8 +11,10 @@ chrome_options.add_argument("--verbose")
 
 browser = webdriver.Chrome(options=chrome_options)
 
-tag_name = "div.goods-card__price-text"
-url = 'https://keram.ru/product/eclipse-indigo/'
+# Вставьте сюда тег для поиска цены:
+tag_name = "span.new_price"
+# Вставьте сюда URL страницы сайта:
+url = 'https://plitkazakaz.ru/shop/plitka-dlya-vannoj/plitka-dlya-vannoj-azori-eclipse-rossiya/plitka-nastennaya-azori-eclipse-indigo-rossiya/'
 
 browser.get(url)
 print("Страница загружена")
