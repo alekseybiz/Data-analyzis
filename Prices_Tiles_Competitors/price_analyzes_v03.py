@@ -6,6 +6,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 import openpyxl
 import re
+from openpyxl import Workbook
+from openpyxl.styles import PatternFill, Border, Side
 
 df = pd.read_excel('sources_xlsx.xlsx', engine='openpyxl')
 num_columns = len(df.columns)
@@ -81,12 +83,18 @@ ws = wb.active
 for col in range(3, num_columns, 2):
     for row in range(2, num_rows + 2):  # начинаем с 2, так как 1 - заголовки
         ws.cell(row=row, column=col).number_format = '0.00%'  # Замените num_columns на индекс колонки natsenka
-
+        # Устанавливаем цвет ячейки на бледно-желтый
+        fill = PatternFill(start_color='FFFF99', end_color='FFFF99', fill_type='solid')
+        ws.cell(row=row, column=col-1).fill = fill
+        # Устанавливаем бордюры для ячейки
+        thin = Side(border_style="thin", color="000000")  # черный тонкий бордер
+        border = Border(left=thin, right=thin, top=thin, bottom=thin)
+        ws.cell(row=row, column=col-1).border = border
 try:
     wb.save(output_file)
-    print(f"Данные успешно сохранены в файл '{output_file}'")
+    print(f"Ячейки отформатированы и сохранены в файл '{output_file}'")
 except Exception as e:
-    print(f"Ошибка записи в файл 'Prices_xlsx.xlsx': {e}")
+    print(f"Ошибка записи в файл '{output_file}': {e}")
 
 browser.quit()
 
