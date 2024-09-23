@@ -41,7 +41,7 @@ for row in range(1, num_rows): #for row in range(1, num_rows):
         url = df.iloc[row, col]
         print(url)
         zakup = df.iloc[0, col]
-        print(zakup)
+        # print(zakup)
         try:
             browser.get(url)
             # Явное ожидание появления элемента
