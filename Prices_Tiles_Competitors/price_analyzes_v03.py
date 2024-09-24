@@ -89,7 +89,8 @@ for col in range(3, num_columns, 2):
         # Устанавливаем бордюры для ячейки
         thin = Side(border_style="thin", color="000000")  # черный тонкий бордер
         border = Border(left=thin, right=thin, top=thin, bottom=thin)
-        ws.cell(row=row, column=col-1).border = border
+        ws.cell(row=row, column=col-1
+                ).border = border
 try:
     wb.save(output_file)
     print(f"Ячейки отформатированы и сохранены в файл '{output_file}'")
