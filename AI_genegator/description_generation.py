@@ -1,7 +1,7 @@
-from config import api_key
 import openai
+from config import api_key, gpt_id
 
-def get_gpt_response(api_key, gpt_id, prompt, max_tokens=1000):
+def get_gpt_response(api_key, prompt, model="gpt-4", max_tokens=500):
     """
     Отправляет запрос в OpenAI API и получает ответ.
 
@@ -27,7 +27,7 @@ def get_gpt_response(api_key, gpt_id, prompt, max_tokens=1000):
         )
 
         # Извлекаем текст из ответа
-        return response["choices"][0]["message"]["content"].strip()
+        return response.choices[0].message["content"].strip()
 
     except Exception as e:
         return f"Произошла ошибка: {e}"
@@ -36,8 +36,8 @@ def get_gpt_response(api_key, gpt_id, prompt, max_tokens=1000):
 if __name__ == "__main__":
 
     # Вопрос для ChatGPT
-    prompt = "Привет! Как дела?"
+    prompt = "Плитка Chicago Gray фабрики New Trend"
 
     # Получение ответа от модели
-    answer = get_gpt_response(api_key, gpt_id, prompt)
+    answer = get_gpt_response(api_key, prompt)
     print(f"Ответ от GPT: {answer}")
