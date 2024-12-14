@@ -12,14 +12,20 @@ openai.api_key = api_key
 client = OpenAI(
     api_key=api_key,  # This is the default and can be omitted
 )
+message = 'привет!'
 
 chat_completion = client.chat.completions.create(
     messages=[
         {
             "role": "user",
-            "content": "Say this is a test",
+            "content": message,
         }
     ],
     model="gpt-4o",
 )
-# print(response.choices[0].message["content"])
+
+# Извлечение текста ответа
+response_text = chat_completion.choices[0].message.content
+
+# Печать только текста
+print(response_text)
