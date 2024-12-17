@@ -65,9 +65,8 @@ for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row):
     print(f"product_info: {product_info}")
 
     # Генерируем описание товара
-    # print(f"Обрабатываю: {product_name}")
-    # description = product_info
     description = get_description(product_info)
+    print(f"description: {description}")
 
     # Записываем описание в соответствующую колонку
     row[description_col_index - 1].value = description
