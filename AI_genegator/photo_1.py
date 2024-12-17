@@ -1,12 +1,12 @@
 import requests
+from config import bing_key
 
-subscription_key = "ВАШ_BING_API_KEY"
 query = "Керамин Гламур керамическая плитка"
 
 
-def search_images_bing(query, subscription_key):
+def search_images_bing(query, bing_key):
     search_url = "https://api.bing.microsoft.com/v7.0/images/search"
-    headers = {"Ocp-Apim-Subscription-Key": subscription_key}
+    headers = {"Ocp-Apim-Subscription-Key": bing_key}
     params = {
         "q": query,              # Запрос для поиска
         "count": 10,             # Количество результатов
