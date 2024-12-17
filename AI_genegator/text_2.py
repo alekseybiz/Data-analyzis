@@ -29,7 +29,7 @@ def get_description(product_info):
                 {"role": "system", "content": "Ты профессиональный креативный копирайтер, создающий описания для товаров для маркетплейса OZON."},
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=500,
+            max_tokens=400,
             temperature=0.7
         )
         return response.choices[0].message.content.strip()
