@@ -2,6 +2,7 @@ import openpyxl
 import openai
 from config import api_key
 from openai import OpenAI
+from openpyxl.styles import Alignment
 
 
 # Установите ваш API-ключ OpenAI
@@ -15,22 +16,21 @@ client = OpenAI(
 # Функция для генерации описания товара через GPT
 def get_description(product_info):
     prompt = (
-        f"Составь привлекательное и убедительное описание для товара на основе его характеристик:\n"
+        f"Составь краткое, привлекательное и убедительное описание для товара на основе его характеристик:\n"
         f"{product_info}\n\n"
-        f"Найди в интернете недостающие технические характеристики этого товара.\n"
-        f"Проанализируй фото и информацию о товаре, выдели ключевые характеристики и преимущества. Проанализируй стиль, цвет, форму, поверхность, размеры товара, его художественное исполнение.\n"
-        f"Твое описание товара должно быть ярким и привлекать внимание. Описание должно быть на 100% уникальное! Описание должно быть законченным текстом."
+        f"Описание должно быть на 100% уникальное!"
+        # f"Проанализируй фото и информацию о товаре, выдели ключевые характеристики и преимущества. Проанализируй стиль, цвет, форму, поверхность, размеры товара, его художественное исполнение. \n"
     )
-    # print(prompt)
+    print(prompt)
     try:
         response = client.chat.completions.create(
             model="chatgpt-4o-latest",
             messages=[
-                {"role": "system", "content": "Ты профессиональный креативный копирайтер, создающий описания для товаров для маркетплейса OZON."},
+                {"role": "system", "content": "Ты профессиональный креативный копирайтер, создающий описания товаров для маркетплейса OZON."},
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=400,
-            temperature=0.7
+            max_tokens=600,
+            temperature=0.6
         )
         return response.choices[0].message.content.strip()
     except Exception as e:
@@ -69,7 +69,10 @@ for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row):
     print(f"description: {description}")
 
     # Записываем описание в соответствующую колонку
-    row[description_col_index - 1].value = description
+    # row[description_col_index - 1].value = description
+    cell = row[description_col_index - 1]
+    cell.value = description
+    cell.alignment = Alignment(wrap_text=True)
 
 # Сохраняем изменения в Excel-файле
 workbook.save(excel_path)
