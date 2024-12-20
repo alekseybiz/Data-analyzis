@@ -35,13 +35,10 @@ def get_description(product, brand, collection):
         # Извлекаем описание из ответа
         return chat_completion.choices[0].message.content.strip()
     except Exception as e:
-        print(f"Ошибка при обработке запроса для {product}: {e}")
-        return "Ошибка при генерации описания"
+        raise RuntimeError(f"Ошибка при обработке запроса для {product}: {e}")
 
-
-# test = get_description('Керамин', 'Гламур')
-# print(test)
-
+        # print(f"Ошибка при обработке запроса для {product}: {e}")
+        # return "Ошибка при генерации описания"
 
 
 # Открываем Excel-файл
@@ -49,24 +46,31 @@ excel_path = "products_3.xlsx"
 workbook = openpyxl.load_workbook(excel_path)
 sheet = workbook.active
 
-for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row, min_col=1, max_col=6):
-    product = row[2].value  # Значение из столбца "товар"
-    brand = row[3].value  # Значение из столбца "Бренд"
-    if isinstance(brand, str) and brand:
-        brand = brand.capitalize()
-    else:
-        brand = ""
-    collection = row[4].value  # Значение из столбца "Коллекция"
-    if isinstance(collection, str) and collection:
-        collection = collection.capitalize()
-    else:
-        collection = ""
+try:
+    # Проход по строкам
+    for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row, min_col=1, max_col=6):
+        product = row[2].value  # Значение из столбца "товар"
+        brand = row[3].value  # Значение из столбца "Бренд"
+        if isinstance(brand, str) and brand:
+            brand = brand.capitalize()
+        else:
+            brand = ""
+        collection = row[4].value  # Значение из столбца "Коллекция"
+        if isinstance(collection, str) and collection:
+            collection = collection.capitalize()
+        else:
+            collection = ""
 
-    if product:
-        print(f"Обрабатываю: товар - {product}")
-        description = get_description(product, brand, collection)
-        row[5].value = description  # Записываем описание в столбец "Описание"
+        if product:
+            print(f"Обрабатываю: товар - {product}")
+            try:
+                description = get_description(product, brand, collection)
+            except RuntimeError as e:
+                print(e)
+                break  # Прерываем цикл при ошибке
+            row[5].value = description  # Записываем описание в столбец "Описание"
 
-# Сохраняем изменения в Excel-файле
-workbook.save(excel_path)
-print(f"Описание сохранено.")
+finally:
+    # Сохраняем изменения в Excel-файле независимо от результата
+    workbook.save(excel_path)
+    print(f"Описание сохранено в {excel_path}.")
