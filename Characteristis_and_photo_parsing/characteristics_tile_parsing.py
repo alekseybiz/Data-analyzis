@@ -3,21 +3,23 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import openpyxl
+from selenium.webdriver.chrome.service import Service
 
 # Настройте путь к вашему WebDriver
 webdriver_path = r"C:\Users\Administrator\Documents\install\chromedriver\chromedriver.exe"  # Замените на путь к вашему драйверу
 
+# Настройка сервиса для драйвера Chrome
+service = Service(webdriver_path)
+
 # Настройте путь к вашему файлу Excel
 excel_path = "products.xlsx"
+
+# Инициализация браузера
+driver = webdriver.Chrome(service=service)
 
 # Открываем таблицу Excel
 workbook = openpyxl.load_workbook(excel_path)
 sheet = workbook.active
-
-# Настройка Selenium
-options = webdriver.ChromeOptions()
-options.add_argument("--start-maximized")
-driver = webdriver.Chrome(executable_path=webdriver_path, options=options)
 
 # URL сайта для поиска
 base_url = "https://3dplitka.ru/"  # Замените на URL вашего сайта
