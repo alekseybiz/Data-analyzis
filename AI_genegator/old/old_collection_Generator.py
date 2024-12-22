@@ -44,7 +44,7 @@ def get_description(brand, collection):
 
 
 # Открываем Excel-файл
-excel_path = "products.xlsx"
+excel_path = "../products.xlsx"
 workbook = openpyxl.load_workbook(excel_path)
 sheet = workbook.active
 
