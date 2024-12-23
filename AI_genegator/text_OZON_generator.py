@@ -7,7 +7,7 @@ from openai import OpenAI
 # Установите ваш API-ключ OpenAI
 openai.api_key = api_key
 
-excel_path = "Озон_Главстройторг_try.xlsx"
+excel_path = "Озон_Главстройторг_ч.2.xlsx"
 
 client = OpenAI(
     api_key=api_key,  # This is the default and can be omitted
