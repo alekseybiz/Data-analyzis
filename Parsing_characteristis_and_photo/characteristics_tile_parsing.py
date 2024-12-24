@@ -37,50 +37,60 @@ try:
             continue
 
         brand_and_collection = brand + " " + collection
+        # brand_and_collection = "Realistik Ginza"
         print(f"Ищем: {brand_and_collection}")
 
+        search_url = f"https://3dplitka.ru/search/?q={brand_and_collection.replace(' ', '%20')}"
+        driver.get(search_url)
+        print(f"Открыт URL поиска: {driver.current_url}")
 
-        # Открываем сайт и выполняем поиск товара
-        driver.get(base_url)
-        search_box = driver.find_element(By.CLASS_NAME, "el-input__inner")  # Найдите селектор для поля поиска
-        print(search_box.tag_name)  # Должно быть "input"
-        search_box.send_keys(Keys.CONTROL + "a")  # Выделяем весь текст
-        search_box.send_keys(Keys.DELETE)  # Удаляем выделенный текст
-        search_box.send_keys(brand_and_collection)
-        search_box.send_keys(Keys.RETURN)
+        # # Открываем сайт и выполняем поиск товара
+        # driver.get(base_url)
+        # search_box = driver.find_element(By.CLASS_NAME, "el-input__inner")  # Найдите селектор для поля поиска
+        # print(search_box.tag_name)  # Должно быть "input"
+        # search_box.send_keys(Keys.CONTROL + "a")  # Выделяем весь текст
+        # search_box.send_keys(Keys.DELETE)  # Удаляем выделенный текст
+        # search_box.send_keys(brand_and_collection)
+        # search_box.send_keys(Keys.RETURN)
 
-        time.sleep(8)  # Ожидание загрузки результатов
+        time.sleep(5)  # Ожидание загрузки результатов
+        current_url = driver.current_url
+        print(f"Текущий URL: {current_url}")
 
         try:
-            element = driver.find_element(By.XPATH, "//li[starts-with(@id, 'el-autocomplete-7611-item-')]")
-            link = element.find_element(By.TAG_NAME, "a")
-            href = link.get_attribute("href")
-            print(f"Ссылка на товар: {href}")
-            link.click()
-
-            # Открываем первую ссылку на найденный товар
-            # product_link = driver.find_element(By.CSS_SELECTOR, "a[data-v-f2647c94]")  # Замените на нужный селектор
-            # print(f"product_link: {product_link}")
-            # product_link.click()
-
-            time.sleep(3)  # Ожидание загрузки страницы товара
-
-            # Парсим характеристики товара
-            for col_index, cell in enumerate(row[1:], start=2):
-                characteristic_name = sheet.cell(row=1, column=col_index).value  # Название характеристики
-
-                if not characteristic_name:
-                    continue
-
-                try:
-                    # Найдите селектор для характеристики на странице товара
-                    characteristic_value = driver.find_element(By.XPATH, f"//*[contains(text(), '{characteristic_name}')]/following-sibling::*").text
-                    cell.value = characteristic_value
-                except Exception as e:
-                    print(f"Характеристика '{characteristic_name}' не найдена: {e}")
-
+            results = WebDriverWait(driver, 10).until(
+                EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".product-card-container"))
+            )
+            print(f"Найдено результатов: {len(results)}")
         except Exception as e:
-            print(f"Товар '{product_name}' не найден: {e}")
+            print(f"Ошибка: {e}")
+
+
+        # try:
+        #     # Открываем первую ссылку на найденный товар
+        #     product_link = driver.find_element(By.CSS_SELECTOR, ".product-card narrow")
+        #     print(f"product_link: {product_link}")
+        #     product_link.click()
+        #
+        #
+        #     time.sleep(3)  # Ожидание загрузки страницы товара
+        #
+        #     # Парсим характеристики товара
+        #     for col_index, cell in enumerate(row[1:], start=2):
+        #         characteristic_name = sheet.cell(row=1, column=col_index).value  # Название характеристики
+        #
+        #         if not characteristic_name:
+        #             continue
+        #
+        #         try:
+        #             # Найдите селектор для характеристики на странице товара
+        #             characteristic_value = driver.find_element(By.XPATH, f"//*[contains(text(), '{characteristic_name}')]/following-sibling::*").text
+        #             cell.value = characteristic_value
+        #         except Exception as e:
+        #             print(f"Характеристика '{characteristic_name}' не найдена: {e}")
+        #
+        # except Exception as e:
+        #     print(f"Товар '{product_name}' не найден: {e}")
 
 finally:
     # Сохраняем изменения в Excel
