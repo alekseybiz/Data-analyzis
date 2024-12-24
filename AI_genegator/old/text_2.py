@@ -39,7 +39,7 @@ def get_description(product_info):
 
 
 # Открываем Excel-файл
-excel_path = "old/products_2_0.xlsx"
+excel_path = "products_2_0.xlsx"
 workbook = openpyxl.load_workbook(excel_path)
 sheet = workbook.active
 
