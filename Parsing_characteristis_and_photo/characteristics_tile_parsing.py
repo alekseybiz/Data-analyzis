@@ -6,6 +6,9 @@ import openpyxl
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+# from selenium.webdriver.common.action_chains import ActionChains
+
+
 
 # Настройте путь к вашему WebDriver
 webdriver_path = r"C:\Users\Administrator\Documents\install\chromedriver\chromedriver.exe"  # Замените на путь к вашему драйверу
@@ -42,38 +45,38 @@ try:
 
         search_url = f"https://3dplitka.ru/search/?q={brand_and_collection.replace(' ', '%20')}"
         driver.get(search_url)
-        print(f"Открыт URL поиска: {driver.current_url}")
-
-        # # Открываем сайт и выполняем поиск товара
-        # driver.get(base_url)
-        # search_box = driver.find_element(By.CLASS_NAME, "el-input__inner")  # Найдите селектор для поля поиска
-        # print(search_box.tag_name)  # Должно быть "input"
-        # search_box.send_keys(Keys.CONTROL + "a")  # Выделяем весь текст
-        # search_box.send_keys(Keys.DELETE)  # Удаляем выделенный текст
-        # search_box.send_keys(brand_and_collection)
-        # search_box.send_keys(Keys.RETURN)
-
-        time.sleep(5)  # Ожидание загрузки результатов
         current_url = driver.current_url
-        print(f"Текущий URL: {current_url}")
+        print(f"Открыт URL поиска: {current_url}")
+        time.sleep(3)  # Ожидание загрузки результатов
+
 
         try:
             results = WebDriverWait(driver, 10).until(
                 EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".product-card-container"))
             )
-            print(f"Найдено результатов: {len(results)}")
+            print(f"Найдено элементов коллекции: {len(results)}")
         except Exception as e:
             print(f"Ошибка: {e}")
 
 
-        # try:
-        #     # Открываем первую ссылку на найденный товар
-        #     product_link = driver.find_element(By.CSS_SELECTOR, ".product-card narrow")
-        #     print(f"product_link: {product_link}")
-        #     product_link.click()
-        #
-        #
-        #     time.sleep(3)  # Ожидание загрузки страницы товара
+        try:
+            # Открываем первую ссылку на найденный товар
+            product_link = driver.find_element(By.CSS_SELECTOR, ".product-card-container a")
+            # Извлекаем ссылку на первый товар
+            product_href = product_link.get_attribute("href")
+            # print(f"Ссылка на первый товар: {product_href}")
+            # Переходим по извлечённой ссылке
+            driver.get(product_href)
+
+            # Проверяем текущий URL
+            current_url = driver.current_url
+            print(f"Открыт URL товара: {current_url}")
+
+
+
+
+
+            time.sleep(3)  # Ожидание загрузки страницы товара
         #
         #     # Парсим характеристики товара
         #     for col_index, cell in enumerate(row[1:], start=2):
@@ -88,9 +91,9 @@ try:
         #             cell.value = characteristic_value
         #         except Exception as e:
         #             print(f"Характеристика '{characteristic_name}' не найдена: {e}")
-        #
-        # except Exception as e:
-        #     print(f"Товар '{product_name}' не найден: {e}")
+
+        except Exception as e:
+            print(f"Товар '{product_name}' не найден: {e}")
 
 finally:
     # Сохраняем изменения в Excel
