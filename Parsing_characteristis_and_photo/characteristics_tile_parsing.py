@@ -62,9 +62,7 @@ try:
         try:
             # Открываем первую ссылку на найденный товар
             product_link = driver.find_element(By.CSS_SELECTOR, ".product-card-container a")
-            # Извлекаем ссылку на первый товар
             product_href = product_link.get_attribute("href")
-            # print(f"Ссылка на первый товар: {product_href}")
             # Переходим по извлечённой ссылке
             driver.get(product_href)
 
