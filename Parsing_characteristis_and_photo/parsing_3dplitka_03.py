@@ -36,6 +36,7 @@ for row in sheet.iter_rows(min_row=42, max_row=sheet.max_row):
     brand = brand.split()[0] if " " in brand else brand
     print(brand)  # Вывод первого слова в Бренд
     collection = row[5].value  # Значение из 6-го столбца ("Collection")
+    row_number = row[0].row
 
     # Проверяем, что значения не пустые
     if not brand and not collection:
@@ -73,16 +74,30 @@ for row in sheet.iter_rows(min_row=42, max_row=sheet.max_row):
         print(f"Открыт URL товара: {current_url}")
 
         # ПАРСИНГ
-        # Проходим по столбцам с 6 по 25
-        for col_index in range(7, 26):  # Нумерация столбцов начинается с 1
-            head = sheet.cell(row=41, column=col_index).value
-            cell_value = row[col_index - 1].value  #
-            print(f"{head} : {cell_value}")
+        # 1. Наименование товара (кол. №7)
+        col_number = 7
+        element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.el-col.el-col-8 h1")))
+        # Извлечение текста элемента
+        product_name = element.text.replace(" - керамическая плитка и керамогранит", "")
+        print(f"Название элемента: {product_name}")
+        sheet.cell(row=row_number, column=col_number).value = product_name
 
-    #
-        # # Возвращаемся обратно к коллекции
-        # driver.get(search_url)
-        # time.sleep(3)  # Ожидание загрузки страницы коллекции
+        # 2. Назначение (кол. №8)
+        col_number = 8
+        element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.raw-content.attr-value")))
+        # Извлечение текста элемента
+        value = element.text
+        print(f"Назначение: {value}")
+        sheet.cell(row=row_number, column=col_number).value = value
+
+
+        # # Проходим по столбцам с 6 по 25
+        # for col_index in range(7, 26):  # Нумерация столбцов начинается с 1
+        #     head = sheet.cell(row=41, column=col_index).value
+        #     cell_value = row[col_index - 1].value  #
+        #     print(f"{head} : {cell_value}")
+
+
 
 
 
