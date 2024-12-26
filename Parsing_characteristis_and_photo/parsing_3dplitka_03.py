@@ -57,35 +57,33 @@ for row in sheet.iter_rows(min_row=42, max_row=sheet.max_row):
     elements_in_collection = len(results)
     print(f"Найдено элементов в коллекции: {elements_in_collection}")
 
-    # Поиск элемента
-    # product_link = driver.find_element(By.CSS_SELECTOR, "div.product-card.narrow a")
-    # # Получение ссылки (href)
-    # href = product_link.get_attribute("href")
-    # print(f"Ссылка на продукт: {href}")
-
     # Проходим по всем элементам коллекции
     for index in range(elements_in_collection):
-        try:
-            # Повторно загружаем элементы коллекции, чтобы избежать устаревания ссылок
-            results = WebDriverWait(driver, 10).until(
-                EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.product-card.narrow a"))
-            )
+        # Повторно загружаем элементы коллекции, чтобы избежать устаревания ссылок
+        results = WebDriverWait(driver, 10).until(
+            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.product-card.narrow a"))
+        )
+        # Берём текущий элемент по индексу
+        product_link = results[index]
+        product_href = product_link.get_attribute("href")
+        # Переходим по ссылке
+        driver.get(product_href)
+        # Проверяем текущий URL
+        current_url = driver.current_url
+        print(f"Открыт URL товара: {current_url}")
 
-            # Берём текущий элемент по индексу
-            product_link = results[index]
-            product_href = product_link.get_attribute("href")
-            # print(f"Открываем элемент {index + 1}: {product_href}")
-            # Переходим по ссылке
-            driver.get(product_href)
-            # Проверяем текущий URL
-            current_url = driver.current_url
-            print(f"Открыт URL товара: {current_url}")
-            #
-            # # Возвращаемся обратно к коллекции
-            # driver.get(search_url)
-            # time.sleep(3)  # Ожидание загрузки страницы коллекции
-        except Exception as e:
-            print(f"Ошибка при обработке элемента {index + 1}: {e}")
+        # ПАРСИНГ
+        # Проходим по столбцам с 6 по 25
+        for col_index in range(7, 26):  # Нумерация столбцов начинается с 1
+            head = sheet.cell(row=41, column=col_index).value
+            cell_value = row[col_index - 1].value  #
+            print(f"{head} : {cell_value}")
+
+    #
+        # # Возвращаемся обратно к коллекции
+        # driver.get(search_url)
+        # time.sleep(3)  # Ожидание загрузки страницы коллекции
+
 
 
 
