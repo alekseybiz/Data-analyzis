@@ -22,7 +22,7 @@ from config import console_cloud_google_1, search_engine_id
 API_KEY = console_cloud_google_1
 CX = search_engine_id
 
-query = "булка"
+query = "Плитка LCM 60120MAX15P Matrix Gray Керамогранит полированный 60x120x7"
 num_images = 10
 
 service = build("customsearch", "v1", developerKey=API_KEY)
