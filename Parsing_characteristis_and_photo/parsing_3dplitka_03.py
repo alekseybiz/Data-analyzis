@@ -84,11 +84,36 @@ for row in sheet.iter_rows(min_row=42, max_row=sheet.max_row):
 
         # 2. Назначение (кол. №8)
         col_number = 8
-        element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.raw-content.attr-value")))
-        # Извлечение текста элемента
-        value = element.text
-        print(f"Назначение: {value}")
-        sheet.cell(row=row_number, column=col_number).value = value
+        # Находим все контейнеры с классом attr-row divided
+        containers = WebDriverWait(driver, 10).until(
+            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.attr-row.divided"))
+        )
+        # Перебираем все найденные контейнеры
+        for container in containers:
+            try:
+                # Извлекаем текст из заголовка
+                header_element = container.find_element(By.CSS_SELECTOR, "span.attr-name")
+                header_text = header_element.text
+
+                # Проверяем, что заголовок равен "Назначение"
+                if header_text == "Назначение":
+                    # Извлекаем текст значения
+                    value_element = container.find_element(By.CSS_SELECTOR, "div.raw-content.attr-value")
+                    text = value_element.text
+                    # Ищем и заменяем "Для коридора и кухни" на "Для коридора, Для кухни"
+                    transformed_text = text.replace("Для коридора и кухни", "Для коридора, Для кухни")
+                    print(f"Значение для '{header_text}': {transformed_text}")
+                    sheet.cell(row=row_number, column=col_number).value = transformed_text
+                    break  # Прерываем цикл, если нашли нужный контейнер
+            except Exception as e:
+                print(f"Ошибка при обработке контейнера: {e}")
+        else:
+            print("Контейнер с заголовком 'Назначение' не найден.")
+
+
+
+
+
 
 
         # # Проходим по столбцам с 6 по 25
