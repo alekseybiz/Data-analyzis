@@ -99,7 +99,7 @@ for row in sheet.iter_rows(min_row=42, max_row=sheet.max_row):
                 if header_text == "Назначение":
                     # Извлекаем текст значения
                     value_element = container.find_element(By.CSS_SELECTOR, "div.raw-content.attr-value")
-                    text = value_element.text
+                    text = value_element.text.strip()
                     # Ищем и заменяем "Для коридора и кухни" на "Для коридора, Для кухни"
                     transformed_text = text.replace("Для коридора и кухни", "Для коридора, Для кухни")
                     print(f"Значение для '{header_text}': {transformed_text}")
@@ -109,6 +109,36 @@ for row in sheet.iter_rows(min_row=42, max_row=sheet.max_row):
                 print(f"Ошибка при обработке контейнера: {e}")
         else:
             print("Контейнер с заголовком 'Назначение' не найден.")
+
+        # 3. Цвет (кол. №9)
+        col_number = 9
+        # Находим все контейнеры с классом attr-row divided
+        containers = WebDriverWait(driver, 10).until(
+            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.attr-row.divided"))
+        )
+        # Перебираем все найденные контейнеры
+        for container in containers:
+            try:
+                # Извлекаем текст из заголовка
+                header_element = container.find_element(By.CSS_SELECTOR, "span.attr-name")
+                print(f"Найден заголовок: {header_element.text}")
+                header_text = header_element.text.strip()
+
+                # Проверяем, что заголовок равен "Основной цвет"
+                # if header_text == "Основной цвет":
+                if "Основной цвет" in header_text:
+                    # Извлекаем текст значения
+                    value_element = container.find_element(By.CSS_SELECTOR, "div.raw-content.attr-value")
+                    text = value_element.text
+                    # # Ищем и заменяем "Для коридора и кухни" на "Для коридора, Для кухни"
+                    # transformed_text = text.replace("Для коридора и кухни", "Для коридора, Для кухни")
+                    print(f"Значение для '{header_text}': {text}")
+                    sheet.cell(row=row_number, column=col_number).value = text
+                    break  # Прерываем цикл, если нашли нужный контейнер
+            except Exception as e:
+                print(f"Ошибка при обработке контейнера: {e}")
+        else:
+            print("Контейнер с заголовком 'Основной цвет' не найден.")
 
 
 
