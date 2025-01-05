@@ -32,7 +32,7 @@ base_url = "https://3dplitka.ru/"  # Замените на URL вашего са
 
 
 # Проходим по всем строкам таблицы
-row_number = 42  # Начальный номер строки
+row_number = 43  # Начальный номер строки
 while row_number <= sheet.max_row:
     row = list(sheet.iter_rows(min_row=row_number, max_row=row_number))[0]  # Получаем текущую строку
     brand = row[4].value  # Значение из 5-го столбца ("Brand")
@@ -98,70 +98,46 @@ while row_number <= sheet.max_row:
         print(f"Название элемента: {product_name}")
         sheet.cell(row=row_number, column=col_number).value = product_name
 
-        # 2. Назначение (кол. №8)
+
+        # 2. Все характеристики с кол. 8 по 10
+        properties = ['Назначение', 'Материал', 'Основной цвет', 'Цветовые оттенки', 'Отражение поверхности',
+                      'Обработка', 'Имитация', 'Стиль', 'Форма', 'Количество Лиц',
+                      'Вариативность цвета', 'Морозоустойчивость', 'Противоскользящая', 'Сопротивление скольжению',
+                      'Износостойкость', 'Влагопоглощаемость', 'В упаковке', 'Кол-во м2 в упаковке',
+                      'Ширина, см', 'Длина, см', 'Толщина мм', 'Вес 1 шт.', 'Вес упаковки']
         col_number = 8
-        # Находим все контейнеры с классом attr-row divided
-        containers = WebDriverWait(driver, 10).until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.attr-row.divided"))
-        )
-        # Перебираем все найденные контейнеры
-        for container in containers:
-            try:
-                # Извлекаем текст из заголовка
-                header_element = container.find_element(By.CSS_SELECTOR, "span.attr-name")
-                header_text = header_element.text
+        for prop in properties:
+            # Находим все контейнеры с классом attr-row divided
+            containers = WebDriverWait(driver, 20).until(
+                EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.attr-row.divided")))
+            # Перебираем все найденные контейнеры
+            for container in containers:
+                try:
+                    # Извлекаем текст из заголовка
+                    header_element = container.find_element(By.CSS_SELECTOR, "span.attr-name")
+                    header_text = header_element.text.strip().replace("\n", "")
+                    # Проверяем, что заголовок равен prop:
+                    if prop in header_text:
+                        # Извлекаем текст значения
+                        value_element = container.find_element(By.CSS_SELECTOR, "div.raw-content.attr-value")
+                        text = value_element.text
+                        # # Ищем и заменяем "Для коридора и кухни" на "Для коридора, Для кухни"
+                        text = text.replace("Для коридора и кухни", "Для коридора, Для кухни")
+                        text = text.replace(" шт", "")
+                        text = text.replace(" м2", "")
+                        text = text.replace(" кг", "")
 
-                # Проверяем, что заголовок равен "Назначение"
-                if header_text == "Назначение":
-                    # Извлекаем текст значения
-                    value_element = container.find_element(By.CSS_SELECTOR, "div.raw-content.attr-value")
-                    text = value_element.text.strip()
-                    # Ищем и заменяем "Для коридора и кухни" на "Для коридора, Для кухни"
-                    transformed_text = text.replace("Для коридора и кухни", "Для коридора, Для кухни")
-                    print(f"Значение для '{header_text}': {transformed_text}")
-                    sheet.cell(row=row_number, column=col_number).value = transformed_text
-                    break  # Прерываем цикл, если нашли нужный контейнер
-            except Exception as e:
-                print(f"Ошибка при обработке контейнера: {e}")
-        else:
-            print("Контейнер с заголовком 'Назначение' не найден.")
-
-        # 3. Цвет (кол. №9)
-        col_number = 9
-        # Находим все контейнеры с классом attr-row divided
-        containers = WebDriverWait(driver, 10).until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.attr-row.divided")))
-        # Перебираем все найденные контейнеры
-        for container in containers:
-            try:
-                # Извлекаем текст из заголовка
-                header_element = container.find_element(By.CSS_SELECTOR, "span.attr-name")
-                # header_text = header_element.get_attribute("innerText").strip()
-                header_text = header_element.text.strip().replace("\n", "")
-                # print(f"заголовок очищенный: {header_text}")
-
-                # Проверяем, что заголовок равен "Основной цвет"
-                # if header_text == "Основной цвет":
-                if "Основной цвет" in header_text:
-                    # Извлекаем текст значения
-                    value_element = container.find_element(By.CSS_SELECTOR, "div.raw-content.attr-value")
-                    text = value_element.text
-                    # # Ищем и заменяем "Для коридора и кухни" на "Для коридора, Для кухни"
-                    # transformed_text = text.replace("Для коридора и кухни", "Для коридора, Для кухни")
-                    print(f"Значение для '{header_text}': {text}")
-                    sheet.cell(row=row_number, column=col_number).value = text
-                    break  # Прерываем цикл, если нашли нужный контейнер
-            except Exception as e:
-                print(f"Ошибка при обработке контейнера: {e}")
-        else:
-            print("Контейнер с заголовком 'Основной цвет' не найден.")
-
-
-        # # Проходим по столбцам с 6 по 25
-        # for col_index in range(7, 26):  # Нумерация столбцов начинается с 1
-        #     head = sheet.cell(row=41, column=col_index).value
-        #     cell_value = row[col_index - 1].value  #
-        #     print(f"{head} : {cell_value}")
+                        print(f"Значение для '{header_text}': {text}")
+                        sheet.cell(row=row_number, column=col_number).value = text
+                        # Записываем заголовок:
+                        if not sheet.cell(row=row_number - 1, column=col_number).value:
+                            sheet.cell(row=row_number - 1, column=col_number).value = header_text
+                        break  # Прерываем цикл, если нашли нужный контейнер
+                except Exception as e:
+                    print(f"Ошибка при обработке контейнера: {e}")
+            else:
+                print(f"Контейнер с заголовком {prop} не найден.")
+            col_number += 1
 
     row_number += 1
 
