@@ -73,6 +73,14 @@ for row in sheet.iter_rows(min_row=42, max_row=sheet.max_row):
         current_url = driver.current_url
         print(f"Открыт URL товара: {current_url}")
 
+        # Нажимаем на кнопку "Показать всё"
+        button = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "div.vue-foldable-view-more.collapsed"))
+        )
+        button.click()
+        print("Кнопка 'Показать всё' нажата.")
+
+
         # ПАРСИНГ
         # 1. Наименование товара (кол. №7)
         col_number = 7
@@ -114,15 +122,15 @@ for row in sheet.iter_rows(min_row=42, max_row=sheet.max_row):
         col_number = 9
         # Находим все контейнеры с классом attr-row divided
         containers = WebDriverWait(driver, 10).until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.attr-row.divided"))
-        )
+            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.attr-row.divided")))
         # Перебираем все найденные контейнеры
         for container in containers:
             try:
                 # Извлекаем текст из заголовка
                 header_element = container.find_element(By.CSS_SELECTOR, "span.attr-name")
-                print(f"Найден заголовок: {header_element.text}")
-                header_text = header_element.text.strip()
+                # header_text = header_element.get_attribute("innerText").strip()
+                header_text = header_element.text.strip().replace("\n", "")
+                # print(f"заголовок очищенный: {header_text}")
 
                 # Проверяем, что заголовок равен "Основной цвет"
                 # if header_text == "Основной цвет":
