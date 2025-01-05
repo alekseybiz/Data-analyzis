@@ -32,20 +32,20 @@ base_url = "https://3dplitka.ru/"  # Замените на URL вашего са
 
 
 # Проходим по всем строкам таблицы
-for row in sheet.iter_rows(min_row=42, max_row=sheet.max_row):
-    print(f"row: {row}")
+row_number = 42  # Начальный номер строки
+while row_number <= sheet.max_row:
+    row = list(sheet.iter_rows(min_row=row_number, max_row=row_number))[0]  # Получаем текущую строку
     brand = row[4].value  # Значение из 5-го столбца ("Brand")
     brand = brand.split()[0] if " " in brand else brand
-    print(brand)  # Вывод первого слова в Бренд
+    print(f"Новая строка, brand= {brand}")  # Вывод первого слова в Бренд
     collection = row[5].value  # Значение из 6-го столбца ("Collection")
-    row_number = row[0].row
     print(f"row_number: {row_number}")
     # Проверяем, что значения не пустые
     if not brand and not collection:
+        row_number += 1
         continue
 
     brand_and_collection = brand + " " + collection
-    # brand_and_collection = "Realistik Amazon"
     print(f"Ищем: {brand_and_collection}")
 
     search_url = f"https://3dplitka.ru/search/?q={brand_and_collection.replace(' ', '%20')}"
@@ -75,17 +75,13 @@ for row in sheet.iter_rows(min_row=42, max_row=sheet.max_row):
         results = WebDriverWait(driver, 10).until(
             EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.product-card.narrow a"))
         )
-        # Берём текущий элемент по индексу
         product_link = results[index]
         product_href = product_link.get_attribute("href")
-        # Переходим по ссылке
         driver.get(product_href)
-        # Проверяем текущий URL
         current_url = driver.current_url
         print(f"Открыт URL товара: {current_url}")
         sheet.cell(row=row_number, column=1).value = current_url  # Записываем колонку №1
 
-        # Нажимаем на кнопку "Показать всё"
         button = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "div.vue-foldable-view-more.collapsed"))
         )
@@ -167,6 +163,7 @@ for row in sheet.iter_rows(min_row=42, max_row=sheet.max_row):
         #     cell_value = row[col_index - 1].value  #
         #     print(f"{head} : {cell_value}")
 
+    row_number += 1
 
 
 # Сохраняем изменения в Excel
