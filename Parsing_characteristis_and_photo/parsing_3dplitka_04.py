@@ -18,7 +18,7 @@ webdriver_path = r"C:\Users\Administrator\Documents\install\chromedriver\chromed
 service = Service(webdriver_path)
 
 # Настройте путь к вашему файлу Excel
-excel_path = "for_parsing_try_02.xlsx"
+excel_path = "for_parsing_try.xlsx"
 
 # Инициализация браузера
 driver = webdriver.Chrome(service=service)
@@ -66,7 +66,6 @@ while row_number <= sheet.max_row:
             # Вставляем новую строку ниже текущей строки
             sheet.insert_rows(row_number + 1)
             row_number += 1  # Обновляем текущий номер строки после вставки
-            print(f"row_number +1: {row_number}")
 
             for i in range(2, 7):  # Заполняем столбцы №№ 2...6
                 sheet.cell(row=row_number, column=i).value = sheet.cell(row=row_number - 1, column=i).value
@@ -98,14 +97,13 @@ while row_number <= sheet.max_row:
         print(f"Название элемента: {product_name}")
         sheet.cell(row=row_number, column=col_number).value = product_name
 
-
-        # 2. Все характеристики с кол. 8 по 10
-        properties = ['Назначение', 'Материал', 'Основной цвет', 'Цветовые оттенки', 'Отражение поверхности',
-                      'Обработка', 'Имитация', 'Стиль', 'Форма', 'Количество Лиц',
+        # 2. Все характеристики
+        properties = ['Назначение', 'Материал', 'Основной цвет', 'Цветовые оттенки',
+                      'Отражение поверхности', 'Обработка', 'Имитация', 'Стиль', 'Форма', 'Количество Лиц',
                       'Вариативность цвета', 'Морозоустойчивость', 'Противоскользящая', 'Сопротивление скольжению',
                       'Износостойкость', 'Влагопоглощаемость', 'В упаковке', 'Кол-во м2 в упаковке',
                       'Ширина, см', 'Длина, см', 'Толщина мм', 'Вес 1 шт.', 'Вес упаковки']
-        col_number = 8
+        col_number = 9
         for prop in properties:
             # Находим все контейнеры с классом attr-row divided
             containers = WebDriverWait(driver, 20).until(
@@ -126,6 +124,7 @@ while row_number <= sheet.max_row:
                         text = text.replace(" шт", "")
                         text = text.replace(" м2", "")
                         text = text.replace(" кг", "")
+                        text = text.replace(" /", ",")
 
                         print(f"Значение для '{header_text}': {text}")
                         sheet.cell(row=row_number, column=col_number).value = text
@@ -138,6 +137,38 @@ while row_number <= sheet.max_row:
             else:
                 print(f"Контейнер с заголовком {prop} не найден.")
             col_number += 1
+
+        # 3. Цена товара (кол. №41)
+        col_number = 41
+        # Находим контейнер <p> с уникальным классом "card-price"
+        container = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "card-price")))
+        # Внутри этого контейнера ищем <span class="card-attr-value">
+        element = container.find_element(By.CSS_SELECTOR, "span.card-attr-value")
+        product_price = element.text.strip().replace(" руб./м²", "")
+        product_price = product_price.replace(" ", "")
+        print(f"Цена элемента: {product_price}")
+        sheet.cell(row=row_number, column=col_number).value = product_price
+
+        # 4. Тип товара (кол. №8)
+        col_number = 8
+        container = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, ".product-attrs-block")))
+        rows = container.find_elements(By.CSS_SELECTOR, ".attr-row")
+        product_type = None
+        for row in rows:
+            # Ищем элемент с классом "attr-name"
+            attr_name = row.find_element(By.CSS_SELECTOR, ".attr-name").text.strip()
+            if attr_name == "Тип товара":
+                # Если нашли, берём значение из элемента с классом "attr-value"
+                product_type = row.find_element(By.CSS_SELECTOR, ".attr-value").text.strip()
+                break
+        if product_type:
+            print(f"Тип товара: {product_type}")
+            sheet.cell(row=row_number, column=col_number).value = product_type
+        else:
+            print("Тип товара не найден.")
+
 
     row_number += 1
 
