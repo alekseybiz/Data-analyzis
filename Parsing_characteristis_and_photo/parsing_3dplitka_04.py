@@ -36,10 +36,15 @@ row_number = 43  # Начальный номер строки
 while row_number <= sheet.max_row:
     row = list(sheet.iter_rows(min_row=row_number, max_row=row_number))[0]  # Получаем текущую строку
     brand = row[4].value  # Значение из 5-го столбца ("Brand")
+    if not brand:
+        row_number += 1
+        continue
     brand = brand.split()[0] if " " in brand else brand
     print(f"Новая строка, brand= {brand}")  # Вывод первого слова в Бренд
     collection = row[5].value  # Значение из 6-го столбца ("Collection")
-    print(f"row_number: {row_number}")
+    if not collection:
+        row_number += 1
+        continue
     # Проверяем, что значения не пустые
     if not brand and not collection:
         row_number += 1
@@ -62,23 +67,29 @@ while row_number <= sheet.max_row:
 
     # Проходим по всем элементам в коллекции
     for index in range(elements_in_collection):
-
-
         # Повторно загружаем элементы коллекции, чтобы избежать устаревания ссылок
         results = WebDriverWait(driver, 10).until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.product-card.narrow a"))
-        )
+            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.product-card.narrow a")))
         product_link = results[index]
         product_href = product_link.get_attribute("href")
         driver.get(product_href)
         current_url = driver.current_url
         print(f"Открыт URL товара: {current_url}")
+        # Проверяем есть в url 'product':
+        if "product" not in current_url:
+            print(f"Слова 'product' нет в этом url.")
+            continue
 
         # Нажимаем Кнопку 'Показать всё'.
-        button = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, "div.vue-foldable-view-more.collapsed")))
-        button.click()
-        print("Кнопка 'Показать всё' нажата.")
+        try:
+            button = WebDriverWait(driver, 5).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, "div.vue-foldable-view-more.collapsed")))
+            button.click()
+            print("Кнопка 'Показать всё' нажата.")
+        except Exception as e:
+            print(f"Произошла ошибка. Нет кнопки 'Показать все' ")
+            # Если ошибка - следующий
+            continue
 
 
         # 1. Наименование товара (кол. №7)
@@ -88,6 +99,11 @@ while row_number <= sheet.max_row:
         product_name = element.text.replace(" - керамическая плитка и керамогранит", "")
         print(f"Название элемента: {product_name}")
 
+        # Проверяем есть в названии Бренд и Коллекция:
+        if brand.lower() not in product_name.lower() and collection.lower() not in product_name.lower():
+            print(f"Бренда {brand} и Коллекции {collection} нет в этом товаре.")
+            continue
+
         if index > 0:
             # Вставляем новую строку ниже текущей строки
             sheet.insert_rows(row_number + 1)
@@ -96,15 +112,14 @@ while row_number <= sheet.max_row:
             for i in range(2, 7):
                 sheet.cell(row=row_number, column=i).value = sheet.cell(row=row_number - 1, column=i).value
 
-        # Записываем колонку №1:
-        sheet.cell(row=row_number, column=1).value = current_url
-
-        # Записываем Название товара:
-        sheet.cell(row=row_number, column=col_number).value = product_name
 
 
         # ПАРСИНГ
+        # Записываем колонку №1:
+        sheet.cell(row=row_number, column=1).value = current_url
 
+        # 1. Записываем Название товара:
+        sheet.cell(row=row_number, column=col_number).value = product_name
 
         # 2. Все характеристики
         properties = ['Назначение', 'Материал', 'Основной цвет', 'Цветовые оттенки',
