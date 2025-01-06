@@ -62,13 +62,7 @@ while row_number <= sheet.max_row:
 
     # Проходим по всем элементам в коллекции
     for index in range(elements_in_collection):
-        if index > 0:
-            # Вставляем новую строку ниже текущей строки
-            sheet.insert_rows(row_number + 1)
-            row_number += 1  # Обновляем текущий номер строки после вставки
 
-            for i in range(2, 7):  # Заполняем столбцы №№ 2...6
-                sheet.cell(row=row_number, column=i).value = sheet.cell(row=row_number - 1, column=i).value
 
         # Повторно загружаем элементы коллекции, чтобы избежать устаревания ссылок
         results = WebDriverWait(driver, 10).until(
@@ -79,23 +73,38 @@ while row_number <= sheet.max_row:
         driver.get(product_href)
         current_url = driver.current_url
         print(f"Открыт URL товара: {current_url}")
-        sheet.cell(row=row_number, column=1).value = current_url  # Записываем колонку №1
 
+        # Нажимаем Кнопку 'Показать всё'.
         button = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, "div.vue-foldable-view-more.collapsed"))
-        )
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "div.vue-foldable-view-more.collapsed")))
         button.click()
         print("Кнопка 'Показать всё' нажата.")
 
 
-        # ПАРСИНГ
         # 1. Наименование товара (кол. №7)
         col_number = 7
         element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.el-col.el-col-8 h1")))
         # Извлечение текста элемента
         product_name = element.text.replace(" - керамическая плитка и керамогранит", "")
         print(f"Название элемента: {product_name}")
+
+        if index > 0:
+            # Вставляем новую строку ниже текущей строки
+            sheet.insert_rows(row_number + 1)
+            row_number += 1  # Обновляем текущий номер строки после вставки
+            # Заполняем столбцы №№ 2...6
+            for i in range(2, 7):
+                sheet.cell(row=row_number, column=i).value = sheet.cell(row=row_number - 1, column=i).value
+
+        # Записываем колонку №1:
+        sheet.cell(row=row_number, column=1).value = current_url
+
+        # Записываем Название товара:
         sheet.cell(row=row_number, column=col_number).value = product_name
+
+
+        # ПАРСИНГ
+
 
         # 2. Все характеристики
         properties = ['Назначение', 'Материал', 'Основной цвет', 'Цветовые оттенки',
