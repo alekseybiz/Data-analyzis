@@ -3,14 +3,13 @@ import requests
 import pandas as pd
 from googleapiclient.discovery import build
 from IPython.display import display, Image
-
 import sys
 from pathlib import Path
-# Определяем путь к корневой папке проекта (Data-analyzis)
-project_root = Path(__file__).resolve().parent.parent
-# Добавляем путь к корню проекта в sys.path
-sys.path.append(str(project_root / "AI_genegator"))
-# Теперь можно импортировать api_key из config
+# # Определяем путь к корневой папке проекта (Data-analyzis)
+# project_root = Path(__file__).resolve().parent.parent
+# # Добавляем путь к корню проекта в sys.path
+# sys.path.append(str(project_root / "AI_genegator"))
+# # Теперь можно импортировать api_key из config
 from config import console_cloud_google_1, search_engine_id
 
 
@@ -19,13 +18,13 @@ from config import console_cloud_google_1, search_engine_id
 
 # excel_path = "for_parsing_try.xlsx"
 
-API_KEY = console_cloud_google_1
+developer_KEY = console_cloud_google_1
 CX = search_engine_id
 
-query = "Плитка LCM 60120MAX15P Matrix Gray Керамогранит полированный 60x120x7"
-num_images = 10
+query = "Belleza Denis Grande Shapetouch 60x120"
+num_images = 7
 
-service = build("customsearch", "v1", developerKey=API_KEY)
+service = build("customsearch", "v1", developerKey=developer_KEY)
 
 def google_image_search(query, num_results):
     image_urls = []

@@ -160,3 +160,4 @@ cython_debug/
 .idea/
 Prices_Tiles_Competitors/.idea/
 AI_genegator/config.py
+Parsing_characteristis_and_photo/config.py
