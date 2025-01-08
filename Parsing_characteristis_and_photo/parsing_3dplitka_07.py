@@ -222,22 +222,22 @@ while row_number <= sheet.max_row:
 
         # 6. Фото товара (кол. №44)
         col_number = 44
-        product_name_reformed = product_name.replace(" ", "+")
-        print(f"Ищем: {product_name_reformed}")
-
-        search_url = f"https://profiplitka.ru/search/?searchstring={product_name_reformed}"
-        driver.get(search_url)
-        current_url = driver.current_url
-        print(f"Открыт URL поиска: {current_url}")
-        time.sleep(10)  # Ожидание загрузки результатов
-        # Ожидание элемента
-        wait = WebDriverWait(driver, 20)  # Увеличиваем время ожидания до 20 секунд
-        try:
-            link_element = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "a.favorites__item-pic")))
-            link_element.click()
-            print(f"Открыт URL поиска: {driver.page_source}")
-        except TimeoutException:
-            print("Элемент 'a.favorites__item-pic' не найден.")
+        # product_name_reformed = product_name.replace(" ", "+")
+        # print(f"Ищем: {product_name_reformed}")
+        #
+        # search_url = f"https://profiplitka.ru/search/?searchstring={product_name_reformed}"
+        # driver.get(search_url)
+        # current_url = driver.current_url
+        # print(f"Открыт URL поиска: {current_url}")
+        # time.sleep(10)  # Ожидание загрузки результатов
+        # # Ожидание элемента
+        # wait = WebDriverWait(driver, 20)  # Увеличиваем время ожидания до 20 секунд
+        # try:
+        #     link_element = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "a.favorites__item-pic")))
+        #     link_element.click()
+        #     print(f"Открыт URL поиска: {driver.page_source}")
+        # except TimeoutException:
+        #     print("Элемент 'a.favorites__item-pic' не найден.")
 
 
     row_number += 1
