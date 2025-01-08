@@ -6,6 +6,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.chrome.options import Options
 # from selenium.webdriver.common.action_chains import ActionChains
 import openpyxl
 from openpyxl import load_workbook
@@ -53,8 +54,8 @@ driver = webdriver.Chrome(service=service)
 workbook = openpyxl.load_workbook(excel_path)
 sheet = workbook.active
 
-# URL сайта для поиска
-base_url = "https://3dplitka.ru/"  # Замените на URL вашего сайта
+# # URL сайта для поиска
+# base_url = "https://3dplitka.ru/"  # Замените на URL вашего сайта
 
 
 # Проходим по всем строкам таблицы
@@ -219,36 +220,24 @@ while row_number <= sheet.max_row:
         else:
             print("Тип товара не найден.")
 
-        # # 6. Фото товара (кол. №44)
-        # col_number = 44
-        # image_hashes = set()
-        # saved_images_count = 0
-        # # Используем название товара для поиска
-        # query = product_name
-        # query = query.lower()
-        # print(f"Поиск изображений для: {query}")
-        #
-        # # Поиск изображений
-        # search_results = search_images(query, API_KEY, CX, num=10)  # Ограничиваем 10 результатами
-        #
-        # image_saved = False
-        # for item in search_results:
-        #     image_url = item['link']
-        #     image, url = download_image(image_url)
-        #     if image:
-        #         print(f"Проверяем изображение: {url}, размер: {image.width}x{image.height}")
-        #
-        #     if image and not contains_watermark(image):
-        #         filename = f"{product_name}.jpg"
-        #         save_path = os.path.join(SAVE_FOLDER, filename)
-        #         if save_image(image, save_path):
-        #             print(f"Изображение сохранено: {save_path}")
-        #             sheet.cell(row=row_number, column=col_number).value = save_path  # Сохраняем путь в Excel
-        #             image_saved = True
-        #             break
-        #
-        # if not image_saved:
-        #     print(f"Не удалось найти подходящее изображение для: {product_name}")
+        # 6. Фото товара (кол. №44)
+        col_number = 44
+        product_name_reformed = product_name.replace(" ", "+")
+        print(f"Ищем: {product_name_reformed}")
+
+        search_url = f"https://profiplitka.ru/search/?searchstring={product_name_reformed}"
+        driver.get(search_url)
+        current_url = driver.current_url
+        print(f"Открыт URL поиска: {current_url}")
+        time.sleep(10)  # Ожидание загрузки результатов
+        # Ожидание элемента
+        wait = WebDriverWait(driver, 20)  # Увеличиваем время ожидания до 20 секунд
+        try:
+            link_element = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "a.favorites__item-pic")))
+            link_element.click()
+            print(f"Открыт URL поиска: {driver.page_source}")
+        except TimeoutException:
+            print("Элемент 'a.favorites__item-pic' не найден.")
 
 
     row_number += 1
