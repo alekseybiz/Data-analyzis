@@ -13,9 +13,10 @@ pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tessera
 API_KEY = console_cloud_google_API_1
 CX = search_engine_id
 product_name = "Belleza Denis Grande Shapetouch 60x120"
-# product_name = "плитка Belleza Latin"
+# product_name = "Belleza"
+
 SAVE_FOLDER = "downloaded_images"
-MIN_SIZE = 800
+MIN_SIZE = 600
 # MAX_RETRIES = 3
 
 if not os.path.exists(SAVE_FOLDER):
@@ -36,9 +37,35 @@ def search_images(query, api_key, cx, num=10):
         "imgSize": "large",
     }
     response = requests.get(url, params=params)
+    print(f"HTTP Status Code: {response.status_code}")  # Проверка статуса ответа
+    if response.status_code != 200:
+        print(f"Ошибка API: {response.json()}")
+        return []
+
     data = response.json()
-    # print(f"Response from search: {data}")  # Для отладки
-    return data.get("items", [])
+    if "error" in data:
+        print(f"Ошибка в данных: {data['error']}")
+        return []
+
+    query_words = set(query.lower().split())  # Разбиваем запрос на слова и приводим их к нижнему регистру
+    print(f"query_words {query_words}")
+
+    filtered_images = []
+
+    for item in data.get("items", []):
+        title = item.get("title", "").lower().replace("(", "").replace(")", "").replace(":", "")
+        print(f"title {title}")
+        link = item.get("link", "")
+        print(f"link: {link}")
+        link = link.lower().replace("/", " ").replace("-", " ").replace(".", " ")   # URL картинки
+        print(f"link разбита: {link}")
+        # Проверяем, содержатся ли все слова из query в title или link
+        if query_words.issubset(set(title.split())) or query_words.issubset(set(link.split())):
+            print(f"item: {item}")
+            filtered_images.append(item)
+
+    return filtered_images
+
 
 
 def download_image(url):
@@ -48,7 +75,7 @@ def download_image(url):
         image = Image.open(BytesIO(response.content))
 
         if image.width < MIN_SIZE and image.height < MIN_SIZE:
-            print(f"Image too small: {url}")
+            print(f"Image too small:({image.width}x{image.height}) {url}")
             return None, None
 
         img_hash = hashlib.md5(response.content).hexdigest()
@@ -57,7 +84,7 @@ def download_image(url):
             return None, None
 
         image_hashes.add(img_hash)
-        print(f"Downloaded successfully: {url}")
+        print(f"Downloaded successfully ({image.width}x{image.height}): {url}")
         return image, url
 
     except Exception as e:
@@ -68,8 +95,12 @@ def download_image(url):
 def contains_watermark(image):
     try:
         text = pytesseract.image_to_string(image)
+        print(f"Извлеченный текст: {text}")
         watermark_keywords = ['.ru', '@', '.com']
-        return any(keyword in text.lower() for keyword in watermark_keywords)
+        # return any(keyword in text.lower() for keyword in watermark_keywords)
+        if any(keyword in text.lower() for keyword in watermark_keywords):
+            print(f"Изображение содержит водяной знак: {url}")
+            return True
     except Exception as e:
         print(f"Проверка на Watermark: {e}")
         return False
@@ -92,13 +123,17 @@ def main():
     tile_query = f"{product_name}"
     print(f"tile_query: {tile_query}")
     search_results = search_images(tile_query, API_KEY, CX, num=10)
-
+    print(f"Количество search_results: {len(search_results)}")
     if not search_results:
         print("Ничего не найдено.")
         return
 
     for item in search_results:
         image_url = item['link']
+        # print(f"image_url: {image_url}")
+        # if not image_url:
+        #     print("URL отсутствует. Пропускаем.")
+        #     continue
         image, url = download_image(image_url)
         if image:
             print(f"Проверяем изображение: {url}, размер: {image.width}x{image.height}")
@@ -109,7 +144,7 @@ def main():
             save_path = os.path.join(SAVE_FOLDER, filename)
             save_image(image, save_path)
         else:
-            print(f"Изображение отфильтровано: {url}")
+            print(f"Изображение отбраковано: {url}")
 
         if saved_images_count >= 5:  # Лимит сохраненных изображений
             print("Reached limit of saved images.")
