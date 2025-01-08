@@ -16,25 +16,25 @@ import requests
 from PIL import Image
 from io import BytesIO
 import hashlib
-from config import console_cloud_google_API_1, search_engine_id
-import pytesseract
+# from config import console_cloud_google_API_1, search_engine_id
+# import pytesseract
+#
+# # Укажите путь к Tesseract
+# pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'  # Путь к tesseract
+#
+# API_KEY = console_cloud_google_API_1
+# CX = search_engine_id
+#
+# MIN_SIZE = 700
+# # MAX_RETRIES = 3
+# image_hashes = set()
+# saved_images_count = 0
 
-# Укажите путь к Tesseract
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'  # Путь к tesseract
-
-API_KEY = console_cloud_google_API_1
-CX = search_engine_id
-
-MIN_SIZE = 700
-# MAX_RETRIES = 3
-image_hashes = set()
-saved_images_count = 0
-
-
-# Путь для сохранения изображений
-SAVE_FOLDER = "downloaded_images"
-if not os.path.exists(SAVE_FOLDER):
-    os.makedirs(SAVE_FOLDER)
+#
+# # Путь для сохранения изображений
+# SAVE_FOLDER = "downloaded_images"
+# if not os.path.exists(SAVE_FOLDER):
+#     os.makedirs(SAVE_FOLDER)
 
 # Настройте путь к вашему WebDriver
 webdriver_path = r"C:\Users\Administrator\Documents\install\chromedriver\chromedriver.exe"  # Замените на путь к вашему драйверу
