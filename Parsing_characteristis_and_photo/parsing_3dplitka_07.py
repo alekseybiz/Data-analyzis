@@ -10,12 +10,12 @@ import openpyxl
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
 import urllib.request
-from P_S_engine_google import search_images, download_image, contains_watermark, save_image  # Импортируем функции
-import os
-import requests
-from PIL import Image
-from io import BytesIO
-import hashlib
+# from P_S_engine_google import search_images, download_image, contains_watermark, save_image  # Импортируем функции
+# import os
+# import requests
+# from PIL import Image
+# from io import BytesIO
+# import hashlib
 # from config import console_cloud_google_API_1, search_engine_id
 # import pytesseract
 #
