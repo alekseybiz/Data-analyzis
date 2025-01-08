@@ -194,22 +194,7 @@ while row_number <= sheet.max_row:
         else:
             print("Тип товара не найден.")
 
-        # # 6. Картинка товара (кол. №8) - картинки с watermark - плохо.
-        # # Кликаем по маленькому фото
-        # small_image = WebDriverWait(driver, 10).until(
-        #     EC.element_to_be_clickable((By.CSS_SELECTOR, "img.product-main-image")))
-        # # small_image.click()
-        # # Используем JavaScript для клика
-        # driver.execute_script("arguments[0].click();", small_image)
-        #
-        # # Ждем загрузки большого фото
-        # large_image = WebDriverWait(driver, 10).until(
-        #     EC.presence_of_element_located((By.CSS_SELECTOR, "img.lg-image")))
-        # image_url = large_image.get_attribute("src")
-        # # Скачиваем фото
-        # product_photo_name = product_name + '.jpg'
-        # urllib.request.urlretrieve(image_url, product_photo_name)
-        # print(f"Картинка скачана: {product_photo_name}")
+
 
 
     row_number += 1
