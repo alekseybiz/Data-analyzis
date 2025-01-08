@@ -20,7 +20,18 @@ driver = webdriver.Chrome(service=service, options=chrome_options)
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
 }
-response = requests.get("https://profiplitka.ru/search/?searchstring=Belleza+Denis+Grande+Shapetouch+60x120", headers=headers)
 
+
+# Открываем страницу через Selenium
+driver.get("https://profiplitka.ru")
+cookies = driver.get_cookies()
+
+# Конвертируем cookies в формат requests
+session = requests.Session()
+for cookie in cookies:
+    session.cookies.set(cookie['name'], cookie['value'])
+
+# Выполняем запрос с cookies
+response = session.get("https://profiplitka.ru/search/?searchstring=Belleza+Denis+Grande+Shapetouch+60x120", headers=headers)
 print(response.status_code)
 print(response.text)
