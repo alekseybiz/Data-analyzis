@@ -12,10 +12,11 @@ pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tessera
 
 API_KEY = console_cloud_google_API_1
 CX = search_engine_id
-BASE_QUERY = "Belleza Latin Travertine Crema Shapetouch 60x120"
+product_name = "Belleza Denis Grande Shapetouch 60x120"
+# product_name = "плитка Belleza Latin"
 SAVE_FOLDER = "downloaded_images"
-MIN_SIZE = 600
-MAX_RETRIES = 3
+MIN_SIZE = 800
+# MAX_RETRIES = 3
 
 if not os.path.exists(SAVE_FOLDER):
     os.makedirs(SAVE_FOLDER)
@@ -88,7 +89,8 @@ def save_image(image, save_path):
 
 def main():
     # Поиск изображений плитки
-    tile_query = f"{BASE_QUERY}"
+    tile_query = f"{product_name}"
+    print(f"tile_query: {tile_query}")
     search_results = search_images(tile_query, API_KEY, CX, num=10)
 
     if not search_results:
@@ -98,11 +100,16 @@ def main():
     for item in search_results:
         image_url = item['link']
         image, url = download_image(image_url)
+        if image:
+            print(f"Проверяем изображение: {url}, размер: {image.width}x{image.height}")
 
         if image and not contains_watermark(image):
-            filename = f"{BASE_QUERY}_{saved_images_count + 1}.jpg"
+            filename = f"{product_name}_{saved_images_count + 1}.jpg"
+            # filename = f"{product_name}.jpg"
             save_path = os.path.join(SAVE_FOLDER, filename)
             save_image(image, save_path)
+        else:
+            print(f"Изображение отфильтровано: {url}")
 
         if saved_images_count >= 5:  # Лимит сохраненных изображений
             print("Reached limit of saved images.")

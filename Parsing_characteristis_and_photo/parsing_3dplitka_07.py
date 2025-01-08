@@ -10,7 +10,31 @@ import openpyxl
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
 import urllib.request
+from P_S_engine_google import search_images, download_image, contains_watermark, save_image  # Импортируем функции
+import os
+import requests
+from PIL import Image
+from io import BytesIO
+import hashlib
+from config import console_cloud_google_API_1, search_engine_id
+import pytesseract
 
+# Укажите путь к Tesseract
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'  # Путь к tesseract
+
+API_KEY = console_cloud_google_API_1
+CX = search_engine_id
+
+MIN_SIZE = 700
+# MAX_RETRIES = 3
+image_hashes = set()
+saved_images_count = 0
+
+
+# Путь для сохранения изображений
+SAVE_FOLDER = "downloaded_images"
+if not os.path.exists(SAVE_FOLDER):
+    os.makedirs(SAVE_FOLDER)
 
 # Настройте путь к вашему WebDriver
 webdriver_path = r"C:\Users\Administrator\Documents\install\chromedriver\chromedriver.exe"  # Замените на путь к вашему драйверу
@@ -194,9 +218,36 @@ while row_number <= sheet.max_row:
         else:
             print("Тип товара не найден.")
 
-        # 6. Фото товара (кол. №44)
-        col_number = 44
-        # {ФУНКЦИЯ ПО ПОИСКУ КАРТИНКИ ДЛЯ ТОВАРА (product_name)}
+        # # 6. Фото товара (кол. №44)
+        # col_number = 44
+        # image_hashes = set()
+        # saved_images_count = 0
+        # # Используем название товара для поиска
+        # query = product_name
+        # query = query.lower()
+        # print(f"Поиск изображений для: {query}")
+        #
+        # # Поиск изображений
+        # search_results = search_images(query, API_KEY, CX, num=10)  # Ограничиваем 10 результатами
+        #
+        # image_saved = False
+        # for item in search_results:
+        #     image_url = item['link']
+        #     image, url = download_image(image_url)
+        #     if image:
+        #         print(f"Проверяем изображение: {url}, размер: {image.width}x{image.height}")
+        #
+        #     if image and not contains_watermark(image):
+        #         filename = f"{product_name}.jpg"
+        #         save_path = os.path.join(SAVE_FOLDER, filename)
+        #         if save_image(image, save_path):
+        #             print(f"Изображение сохранено: {save_path}")
+        #             sheet.cell(row=row_number, column=col_number).value = save_path  # Сохраняем путь в Excel
+        #             image_saved = True
+        #             break
+        #
+        # if not image_saved:
+        #     print(f"Не удалось найти подходящее изображение для: {product_name}")
 
 
     row_number += 1
