@@ -12,7 +12,7 @@ pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tessera
 
 API_KEY = console_cloud_google_API_1
 CX = search_engine_id
-product_name = "Belleza Denis Grande Shapetouch 60x120"
+product_name = "Керама Марацци Клемансо 16051 беж грань 7,4х15"
 # product_name = "Belleza"
 
 SAVE_FOLDER = "downloaded_images"
@@ -25,7 +25,7 @@ if not os.path.exists(SAVE_FOLDER):
 image_hashes = set()
 saved_images_count = 0
 
-def search_images(query, api_key, cx, num=5):
+def search_images(query, api_key, cx, num=7):
     url = "https://www.googleapis.com/customsearch/v1"
     params = {
         "q": query,
@@ -45,7 +45,7 @@ def search_images(query, api_key, cx, num=5):
     if "error" in data:
         print(f"Ошибка в данных: {data['error']}")
         return []
-    query = query.lower().replace("x", " ").replace("х", " ").replace("kh", " ")
+    query = query.lower().replace("x", " ").replace("х", " ").replace("kh", " ").replace(".", " ").replace(",", " ")
 
     query_words = set(query.split())  # Разбиваем запрос на слова и приводим их к нижнему регистру
     print(f"query_words {query_words}")
@@ -59,8 +59,9 @@ def search_images(query, api_key, cx, num=5):
         link = item.get("link", "").lower()
         print(f"link: {link}")
         title_and_link = title + " " + link
-        title_and_link = title_and_link.lower().replace("/", " ").replace("-", " ").replace(".", " ").replace("_", " ").replace(":", "")
+        title_and_link = title_and_link.lower().replace("/", " ").replace("-", " ").replace("_", " ").replace(":", "")
         title_and_link = title_and_link.replace("x", " ").replace("х", " ").replace("kh", " ").replace("(", "").replace(")", "")
+        title_and_link = title_and_link.replace(":", " ").replace(";", " ").replace("*", " ").replace(".", " ").replace(",", " ")
 
         print(f"title_and_link разбита: {title_and_link}")
         # Проверяем, содержатся ли все слова из query в title или link
