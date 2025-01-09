@@ -135,23 +135,37 @@ def main():
         print("Ничего не найдено.")
         return
 
+    largest_image = None
+    largest_area = 0
+
     for item in search_results:
         image_url = item['link']
         image, url = download_image(image_url)
         if image:
             print(f"Проверяем изображение, размер: {image.width}x{image.height}")
 
+        # Проверяем изображение
         if image and not contains_watermark(image):
-            filename = f"{product_name}_{saved_images_count + 1}.jpg"
-            save_path = os.path.join(SAVE_FOLDER, filename)
-            save_image(image, save_path)
+            image_area = image.width * image.height  # Вычисляем площадь изображения
+            if image_area > largest_area:  # Если площадь больше текущего максимума
+                largest_image = (image, url)
+                largest_area = image_area
         else:
             print(f"Изображение отбраковано: {url}")
 
-        if saved_images_count >= 5:  # Лимит сохраненных изображений
-            print("Reached limit of saved images.")
-            break
+    # Сохраняем самое большое изображение
+    if largest_image:
+        image, url = largest_image
+        filename = f"{product_name}.jpg"
+        save_path = os.path.join(SAVE_FOLDER, filename)
+        if save_image(image, save_path):
+            print(f"Самое большое изображение {image.width}x{image.height} сохранено: {save_path}")
+        else:
+            print(f"Не удалось сохранить изображение: {url}")
+    else:
+        print("Подходящее изображение не найдено.")
 
 if __name__ == "__main__":
     main()
+
 
