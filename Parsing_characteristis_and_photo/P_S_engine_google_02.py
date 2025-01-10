@@ -13,7 +13,7 @@ pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tessera
 
 API_KEY = console_cloud_google_API_1
 CX = search_engine_id
-product_name = "Керама Марацци Клемансо 16051 беж грань 7,4х15"
+product_name = "Equipe Бордюр BARDIGLIO TORELLO LIGHT 2x15"
 # product_name = "Belleza"
 
 SAVE_FOLDER = "downloaded_images"
