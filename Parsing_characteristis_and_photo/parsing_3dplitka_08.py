@@ -85,7 +85,7 @@ while row_number <= sheet.max_row:
                                                ".//ancestor::div[contains(@class, 'product-card-container')]//a")
             product_href = link_element.get_attribute("href")  # Получаем ссылку на товар
             product_links.append(product_href)  # Сохраняем ссылку
-            print(f"{index}. Ссылка на товар: {product_href}")
+            print(f"{index+1}. Ссылка на товар: {product_href}")
         except Exception as e:
             print(f"Ошибка при извлечении ссылки из элемента {index}: {e}")
 
@@ -93,7 +93,7 @@ while row_number <= sheet.max_row:
     for index, product_href in enumerate(product_links):
         driver.get(product_href)
         current_url = driver.current_url
-        print(f"Открыт URL товара {index}: {current_url}")
+        print(f"Открыт URL товара {index+1}: {current_url}")
 
         # Проверяем: есть ли в url 'product':
         if "product" not in current_url:
