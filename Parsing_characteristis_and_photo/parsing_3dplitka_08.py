@@ -9,34 +9,6 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.options import Options
 # from selenium.webdriver.common.action_chains import ActionChains
 import openpyxl
-from openpyxl import load_workbook
-from openpyxl.utils import get_column_letter
-import urllib.request
-# from P_S_engine_google import search_images, download_image, contains_watermark, save_image  # Импортируем функции
-# import os
-# import requests
-# from PIL import Image
-# from io import BytesIO
-# import hashlib
-# from config import console_cloud_google_API_1, search_engine_id
-# import pytesseract
-#
-# # Укажите путь к Tesseract
-# pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'  # Путь к tesseract
-#
-# API_KEY = console_cloud_google_API_1
-# CX = search_engine_id
-#
-# MIN_SIZE = 700
-# # MAX_RETRIES = 3
-# image_hashes = set()
-# saved_images_count = 0
-
-#
-# # Путь для сохранения изображений
-# SAVE_FOLDER = "downloaded_images"
-# if not os.path.exists(SAVE_FOLDER):
-#     os.makedirs(SAVE_FOLDER)
 
 # Настройте путь к вашему WebDriver
 webdriver_path = r"C:\Users\Administrator\Documents\install\chromedriver\chromedriver.exe"  # Замените на путь к вашему драйверу
@@ -67,7 +39,7 @@ while row_number <= sheet.max_row:
         row_number += 1
         continue
     brand = brand.split()[0] if " " in brand else brand
-    print(f"Новая строка, brand= {brand}")  # Вывод первого слова в Бренд
+    print(f"Стр.{row_number}. brand: {brand}")  # Вывод первого слова в Бренд
     collection = row[5].value  # Значение из 6-го столбца ("Collection")
     if not collection:
         row_number += 1
@@ -86,23 +58,44 @@ while row_number <= sheet.max_row:
     print(f"Открыт URL поиска: {collection_url}")
     time.sleep(3)  # Ожидание загрузки результатов
 
+    # Нажимаем Кнопку 'Показать еще N товаров'.
+    try:
+        button = WebDriverWait(driver, 3).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "button.show-all-btn")))
+        button.click()
+        print("Кнопка 'Показать еще N товаров' нажата.")
+    except Exception as e:
+        print(f"Нет кнопки 'Показать еще N товаров' ")
+
+    # Прокручиваем страницу вниз, чтобы все элементы стали видимыми
+    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    time.sleep(3)  # Ожидание отображения всех элементов после прокрутки
+
     results = WebDriverWait(driver, 10).until(
-        EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".product-card-container"))
-    )
+        EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".product-card-image")))
     elements_in_collection = len(results)
     print(f"Найдено элементов в коллекции: {elements_in_collection}")
 
-    # Проходим по всем элементам в коллекции
-    for index in range(elements_in_collection):
-        # Повторно загружаем элементы коллекции, чтобы избежать устаревания ссылок
-        results = WebDriverWait(driver, 10).until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.product-card.narrow a")))
-        product_link = results[index]
-        product_href = product_link.get_attribute("href")
+    # Собираем все ссылки на элементы товаров
+    product_links = []
+    for index, result in enumerate(results):
+        try:
+            # Находим <a> внутри карточки товара
+            link_element = result.find_element(By.XPATH,
+                                               ".//ancestor::div[contains(@class, 'product-card-container')]//a")
+            product_href = link_element.get_attribute("href")  # Получаем ссылку на товар
+            product_links.append(product_href)  # Сохраняем ссылку
+            print(f"{index}. Ссылка на товар: {product_href}")
+        except Exception as e:
+            print(f"Ошибка при извлечении ссылки из элемента {index}: {e}")
+
+    # Переходим по каждой ссылке
+    for index, product_href in enumerate(product_links):
         driver.get(product_href)
         current_url = driver.current_url
-        print(f"Открыт URL товара: {current_url}")
-        # Проверяем есть в url 'product':
+        print(f"Открыт URL товара {index}: {current_url}")
+
+        # Проверяем: есть ли в url 'product':
         if "product" not in current_url:
             print(f"Слова 'product' нет в этом url.")
             continue
@@ -114,10 +107,9 @@ while row_number <= sheet.max_row:
             button.click()
             print("Кнопка 'Показать всё' нажата.")
         except Exception as e:
-            print(f"Произошла ошибка. Нет кнопки 'Показать все' ")
+            print(f"Нет кнопки 'Показать все' ")
             # Если ошибка - следующий
-            continue
-
+            # continue
 
         # 1. Наименование товара (кол. №7)
         col_number = 7
@@ -138,7 +130,6 @@ while row_number <= sheet.max_row:
             # Заполняем столбцы №№ 2...6
             for i in range(2, 7):
                 sheet.cell(row=row_number, column=i).value = sheet.cell(row=row_number - 1, column=i).value
-
 
 
         # ПАРСИНГ
@@ -221,16 +212,19 @@ while row_number <= sheet.max_row:
             print("Тип товара не найден.")
 
         # 6. Фото товара (кол. №44)
-        col_number = 44
+        # col_number = 44
 
 
 
     row_number += 1
+    print(f"row_number: {row_number}")
+    # Сохраняем изменения в Excel
+    workbook.save(excel_path)
+    print(f"Данные сохранены в {excel_path}")
 
-
-# Сохраняем изменения в Excel
-workbook.save(excel_path)
-print(f"Данные сохранены в {excel_path}")
+# # Сохраняем изменения в Excel
+# workbook.save(excel_path)
+# print(f"Данные сохранены в {excel_path}")
 
 # Закрываем браузер
 driver.quit()
