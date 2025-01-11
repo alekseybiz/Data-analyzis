@@ -17,7 +17,7 @@ webdriver_path = r"C:\Users\Administrator\Documents\install\chromedriver\chromed
 service = Service(webdriver_path)
 
 # Настройте путь к вашему файлу Excel
-excel_path = "Фиеста-Керамика 13.12.24.xlsx"
+excel_path = "Altacera 12,13,16.12.24.xlsx"
 
 # Инициализация браузера
 driver = webdriver.Chrome(service=service)
@@ -38,8 +38,8 @@ while row_number <= sheet.max_row:
     if not brand:
         row_number += 1
         continue
-    brand = brand.split()[0] if " " in brand else brand
-    print(f"Стр.{row_number}. brand: {brand}")  # Вывод первого слова в Бренд
+    # brand = brand.split()[0] if " " in brand else brand  # Вывод первого слова в Бренд
+    print(f"Стр.{row_number}. brand: {brand}")
     collection = row[5].value  # Значение из 6-го столбца ("Collection")
     if not collection:
         row_number += 1
@@ -71,8 +71,14 @@ while row_number <= sheet.max_row:
     driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
     time.sleep(3)  # Ожидание отображения всех элементов после прокрутки
 
-    results = WebDriverWait(driver, 10).until(
-        EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".product-card-image")))
+    try:
+        results = WebDriverWait(driver, 10).until(
+            EC.presence_of_all_elements_located((By.CSS_SELECTOR, ".product-card-image")))
+    except Exception as e:
+        print(f"! results не найден. Ошибка {e}")
+        row_number += 1
+        continue
+
     elements_in_collection = len(results)
     print(f"Найдено элементов в коллекции: {elements_in_collection}")
 
@@ -97,7 +103,7 @@ while row_number <= sheet.max_row:
 
         # Проверяем: есть ли в url 'product':
         if "product" not in current_url:
-            print(f"Слова 'product' нет в этом url.")
+            print(f"! Слова 'product' нет в этом url.")
             continue
 
         # Нажимаем Кнопку 'Показать всё'.
@@ -118,9 +124,11 @@ while row_number <= sheet.max_row:
         product_name = element.text.replace(" - керамическая плитка и керамогранит", "")
         print(f"Название элемента: {product_name}")
 
-        # Проверяем есть в названии Бренд и Коллекция:
-        if brand.lower() not in product_name.lower() and collection.lower() not in product_name.lower():
-            print(f"Бренда {brand} и Коллекции {collection} нет в этом товаре.")
+        # Проверяем есть ли в названии Бренд и Коллекция:
+        search_words = brand_and_collection.lower().split()
+        # Проверяем наличие всех слов в названии товара
+        if not all(word in product_name.lower() for word in search_words):
+            print(f"! Не все слова из '{brand_and_collection}' найдены в названии товара: '{product_name}'")
             continue
 
         if index > 0:
@@ -177,7 +185,7 @@ while row_number <= sheet.max_row:
                 except Exception as e:
                     print(f"Ошибка при обработке контейнера: {e}")
             else:
-                print(f"Контейнер с заголовком {prop} не найден.")
+                print(f"! Контейнер с заголовком {prop} не найден.")
             col_number += 1
 
         # 4. Цена товара (кол. №41)
@@ -209,7 +217,7 @@ while row_number <= sheet.max_row:
             print(f"Тип товара: {product_type}")
             sheet.cell(row=row_number, column=col_number).value = product_type
         else:
-            print("Тип товара не найден.")
+            print("! Тип товара не найден.")
 
         # 6. Фото товара (кол. №44)
         # col_number = 44
