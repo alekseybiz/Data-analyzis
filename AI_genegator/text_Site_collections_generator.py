@@ -24,7 +24,7 @@ def get_description(brand, collection):
         chat_completion = client.chat.completions.create(
             # model="gpt-4o-mini",
             model="chatgpt-4o-latest",
-            max_tokens=800,
+            max_tokens=900,
             temperature=0.7,
             messages=[
                 {
