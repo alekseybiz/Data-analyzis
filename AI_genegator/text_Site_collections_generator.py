@@ -7,7 +7,7 @@ from openai import OpenAI
 # Установите ваш API-ключ OpenAI
 openai.api_key = api_key
 
-excel_path = "тексты коллекций_Российская плитка_готово.xlsx"
+excel_path = "тексты коллекций_try.xlsx"
 
 client = OpenAI(
     api_key=api_key,  # This is the default and can be omitted
@@ -50,7 +50,6 @@ i = 0
 try:
     # Проход по строкам
     for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row, min_col=1, max_col=6):
-        i += 1
         brand = row[2].value  # Значение из столбца "Бренд"
         if isinstance(brand, str) and brand:
             brand = brand.capitalize()
@@ -65,12 +64,17 @@ try:
         if collection:
             print(f"{i}. Обрабатываю коллекцию: {collection}")
             try:
-                description = get_description(brand, collection)
+                while True:  # Цикл для проверки и генерации текста
+                    description = get_description(brand, collection)
+                    if description.endswith(">"):  # Проверяем последний символ
+                        break  # Если проверка пройдена, выходим из цикла
+                    print("Описание не прошло проверку, повторяем генерацию.")
                 print(f"Описание: {description}")
             except RuntimeError as e:
                 print(e)
                 break  # Прерываем цикл при ошибке
             row[4].value = description  # Записываем описание в столбец "Описание"
+        i += 1
 
 finally:
     # Сохраняем изменения в Excel-файле независимо от результата
