@@ -230,16 +230,12 @@ while row_number <= sheet.max_row:
         # col_number = 44
 
 
-
-    row_number += 1
-    print(f"row_number: {row_number}")
     # Сохраняем изменения в Excel
     workbook.save(excel_path)
-    print(f"Данные сохранены в {excel_path}")
+    print(f"Данные стр. {row_number} сохранены в {excel_path}")
+    row_number += 1
+    # print(f"row_number: {row_number}")
 
-# # Сохраняем изменения в Excel
-# workbook.save(excel_path)
-# print(f"Данные сохранены в {excel_path}")
 
 # Закрываем браузер
 driver.quit()
