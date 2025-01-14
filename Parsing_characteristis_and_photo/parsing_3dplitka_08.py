@@ -17,7 +17,7 @@ webdriver_path = r"C:\Users\Administrator\Documents\install\chromedriver\chromed
 service = Service(webdriver_path)
 
 # Настройте путь к вашему файлу Excel
-excel_path = "for_parsing_try.xlsx"
+excel_path = "parsing_3dplitka/for_parsing_try.xlsx"
 
 # Инициализация браузера
 driver = webdriver.Chrome(service=service)
