@@ -9,9 +9,8 @@ openai.api_key = api_key
 
 excel_path = "тексты коллекций_try.xlsx"
 
-client = OpenAI(
-    api_key=api_key,  # This is the default and can be omitted
-)
+client = OpenAI(api_key=api_key)  # This is the default and can be omitted
+
 
 # Функция для получения описания от ChatGPT
 def get_description(brand, collection):
