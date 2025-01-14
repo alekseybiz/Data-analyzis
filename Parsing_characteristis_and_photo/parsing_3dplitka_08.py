@@ -17,7 +17,7 @@ webdriver_path = r"C:\Users\Administrator\Documents\install\chromedriver\chromed
 service = Service(webdriver_path)
 
 # Настройте путь к вашему файлу Excel
-excel_path = "Мир Керамики 27.12.24.xlsx"
+excel_path = "Вог-Керамика 10.01.25,Керамогранит.ру 10.01.25, Мастер-Дом 10.01.25, Мир 9.01.xlsx"
 
 # Инициализация браузера
 driver = webdriver.Chrome(service=service)
