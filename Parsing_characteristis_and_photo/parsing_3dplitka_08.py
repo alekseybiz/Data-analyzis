@@ -17,7 +17,7 @@ webdriver_path = r"C:\Users\Administrator\Documents\install\chromedriver\chromed
 service = Service(webdriver_path)
 
 # Настройте путь к вашему файлу Excel
-excel_path = "Вог-Керамика 10.01.25,Керамогранит.ру 10.01.25, Мастер-Дом 10.01.25, Мир 9.01.xlsx"
+excel_path = "for_parsing_try.xlsx"
 
 # Инициализация браузера
 driver = webdriver.Chrome(service=service)
@@ -218,6 +218,13 @@ while row_number <= sheet.max_row:
             sheet.cell(row=row_number, column=col_number).value = product_type
         else:
             print("! Тип товара не найден.")
+
+        # 6. Дополняем Наименование товара (кол. №7)
+        col_number = 7
+        product_name = product_name.replace(collection, f"{collection} {product_type}")
+        sheet.cell(row=row_number, column=col_number).value = product_name
+        print(f"Название элемента дополненное: {product_name}")
+
 
         # 6. Фото товара (кол. №44)
         # col_number = 44
