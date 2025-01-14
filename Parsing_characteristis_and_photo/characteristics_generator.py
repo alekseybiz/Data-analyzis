@@ -14,7 +14,7 @@ from config import api_key
 # Установите ваш API-ключ OpenAI
 openai.api_key = api_key
 
-excel_path = "for_parsing_try.xlsx"
+excel_path = "parsing_3dplitka/for_parsing_try.xlsx"
 
 client = OpenAI(api_key=api_key)
 
