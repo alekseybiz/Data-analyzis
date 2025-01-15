@@ -18,7 +18,7 @@ openai.api_key = api_key
 client = OpenAI(api_key=api_key)  # This is the default and can be omitted
 
 # Настройте путь к вашему файлу Excel
-excel_path = "Ozon/ОЗОН Equipe_try.xlsx"
+excel_path = "Ozon/ОЗОН Equipe_готово.xlsx"
 
 # Функция для нахождения характеристик от ChatGPT
 def get_description(product_name, property, variants, explanation):
@@ -61,7 +61,9 @@ def get_description(product_name, property, variants, explanation):
 workbook = openpyxl.load_workbook(excel_path)
 sheet = workbook.active
 
-col_numbers = [19, 20]
+col_numbers = [9, 10, 11, 12, 19, 20, 21, 22, 23, 24, 25, 28, 31, 32, 33, 34, 35, 36, 37, 40, 43, 45, 46, 47, 48, 49, 50, 51, 52]
+# col_numbers = [20]
+
 
 # Проходим по всем строкам таблицы
 row_number = 6  # Начальный номер строки
@@ -72,16 +74,37 @@ while row_number <= sheet.max_row:
     if not product_name:
         row_number += 1
         continue
-    print(f"Стр.{row_number}. товар: {product_name}")
+    print(f"!!! Стр.{row_number}. товар: {product_name}")
 
 
     for col_number in col_numbers:
         property = sheet.cell(row=2, column=col_number).value
         print(f"property: {property}")
         variants = sheet.cell(row=4, column=col_number).value
-        print(f"variants: {variants}")
+        # print(f"variants: {variants}")
         explanation = sheet.cell(row=5, column=col_number).value
-        print(f"explanation: {explanation}")
+        # print(f"explanation: {explanation}")
+        exist_property = sheet.cell(row=row_number, column=col_number).value
+        print(f"exist_property: {exist_property}")
+
+        if col_number in (24, 31, 33) and exist_property:
+            # Проверяем, является ли exist_property строкой
+            if isinstance(exist_property, str) and ',' in exist_property:
+                new_property = exist_property.replace(',', '.')
+                # Записываем свойство только если замена выполнена
+                sheet.cell(row=row_number, column=col_number).value = new_property
+                print(f"! Перезаписали new_property: {new_property}")
+            elif not isinstance(exist_property, str):
+                # Если это не строка, преобразуем в строку и проверяем наличие запятой
+                exist_property_str = str(exist_property)
+                if ',' in exist_property_str:
+                    new_property = exist_property_str.replace(',', '.')
+                    # Записываем свойство только если замена выполнена
+                    sheet.cell(row=row_number, column=col_number).value = new_property
+                    print(f"! Перезаписали new_property: {new_property}")
+
+        if exist_property:
+            continue
 
         description = get_description(product_name, property, variants, explanation)
         print(f"description: {description}")
