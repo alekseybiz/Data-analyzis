@@ -86,7 +86,7 @@ while row_number <= sheet.max_row:
         # print(f"explanation: {explanation}")
         exist_property = sheet.cell(row=row_number, column=col_number).value
         if exist_property == "Пусто" or exist_property == "пусто":
-            exist_property = ''
+            exist_property = ""
         print(f"exist_property: {exist_property}")
 
         if col_number in (24, 31, 33) and exist_property:
