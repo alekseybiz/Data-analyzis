@@ -17,7 +17,7 @@ webdriver_path = r"C:\Users\Administrator\Documents\install\chromedriver\chromed
 service = Service(webdriver_path)
 
 # Настройте путь к вашему файлу Excel
-excel_path = "parsing_3dplitka/for_parsing_try.xlsx"
+excel_path = "parsing_3dplitka/Керам-Трейд 12.12.24.xlsx"
 
 # Инициализация браузера
 driver = webdriver.Chrome(service=service)
@@ -34,20 +34,25 @@ sheet = workbook.active
 row_number = 43  # Начальный номер строки
 while row_number <= sheet.max_row:
     row = list(sheet.iter_rows(min_row=row_number, max_row=row_number))[0]  # Получаем текущую строку
-    brand = row[4].value  # Значение из 5-го столбца ("Brand")
-    if not brand:
+    brand = row[5].value  # Значение из 6-го столбца ("Brand")
+    brand_ours = brand
+    three_dplitka_brand = row[1].value  # Значение из 2-го столбца (Название фабрики в 3dplitka)
+    if not brand and not three_dplitka_brand:
         row_number += 1
         continue
     # brand = brand.split()[0] if " " in brand else brand  # Вывод первого слова в Бренд
+    if three_dplitka_brand:
+        brand = three_dplitka_brand
+
     print(f"Стр.{row_number}. brand: {brand}")
-    collection = row[5].value  # Значение из 6-го столбца ("Collection")
+    collection = row[6].value  # Значение из 7-го столбца ("Collection")
     if not collection:
         row_number += 1
         continue
-    # Проверяем, что значения не пустые
-    if not brand and not collection:
-        row_number += 1
-        continue
+    # # Проверяем, что значения не пустые
+    # if not brand and not collection:
+    #     row_number += 1
+    #     continue
 
     brand_and_collection = brand + " " + collection
     print(f"Ищем: {brand_and_collection}")
@@ -83,17 +88,25 @@ while row_number <= sheet.max_row:
     print(f"Найдено элементов в коллекции: {elements_in_collection}")
 
     # Собираем все ссылки на элементы товаров
-    product_links = []
+    product_links = set()  # Используем множество для хранения уникальных ссылок
     for index, result in enumerate(results):
         try:
             # Находим <a> внутри карточки товара
             link_element = result.find_element(By.XPATH,
                                                ".//ancestor::div[contains(@class, 'product-card-container')]//a")
             product_href = link_element.get_attribute("href")  # Получаем ссылку на товар
-            product_links.append(product_href)  # Сохраняем ссылку
-            print(f"{index+1}. Ссылка на товар: {product_href}")
+            if product_href not in product_links:  # Проверяем, есть ли уже такая ссылка
+                product_links.add(product_href)  # Добавляем ссылку в множество
+                print(f"{index + 1}. Уникальная ссылка на товар: {product_href}")
         except Exception as e:
             print(f"Ошибка при извлечении ссылки из элемента {index}: {e}")
+    # Преобразуем множество обратно в список, если это нужно
+    product_links = list(product_links)
+
+        #     product_links.append(product_href)  # Сохраняем ссылку
+        #     print(f"{index+1}. Ссылка на товар: {product_href}")
+        # except Exception as e:
+        #     print(f"Ошибка при извлечении ссылки из элемента {index}: {e}")
 
     # Переходим по каждой ссылке
     for index, product_href in enumerate(product_links):
@@ -118,7 +131,7 @@ while row_number <= sheet.max_row:
             # continue
 
         # 1. Наименование товара (кол. №7)
-        col_number = 7
+        col_number = 8
         element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.el-col.el-col-8 h1")))
         # Извлечение текста элемента
         product_name = element.text.replace(" - керамическая плитка и керамогранит", "")
@@ -135,8 +148,8 @@ while row_number <= sheet.max_row:
             # Вставляем новую строку ниже текущей строки
             sheet.insert_rows(row_number + 1)
             row_number += 1  # Обновляем текущий номер строки после вставки
-            # Заполняем столбцы №№ 2...6
-            for i in range(2, 7):
+            # Заполняем столбцы №№ 2...8
+            for i in range(2, 8):
                 sheet.cell(row=row_number, column=i).value = sheet.cell(row=row_number - 1, column=i).value
 
 
@@ -153,7 +166,7 @@ while row_number <= sheet.max_row:
                       'Вариативность цвета', 'Морозоустойчивость', 'Противоскользящая', 'Сопротивление скольжению',
                       'Износостойкость', 'Влагопоглощаемость', 'В упаковке', 'Кол-во м2 в упаковке',
                       'Ширина, см', 'Длина, см', 'Толщина мм', 'Вес 1 шт.', 'Вес упаковки']
-        col_number = 9
+        col_number = 10
         for prop in properties:
             # Находим все контейнеры с классом attr-row divided
             containers = WebDriverWait(driver, 20).until(
@@ -188,8 +201,8 @@ while row_number <= sheet.max_row:
                 print(f"! Контейнер с заголовком {prop} не найден.")
             col_number += 1
 
-        # 4. Цена товара (кол. №41)
-        col_number = 41
+        # 4. Цена на 3dplitka (кол. №42)
+        col_number = 42
         # Находим контейнер <p> с уникальным классом "card-price"
         container = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, "card-price")))
@@ -200,8 +213,8 @@ while row_number <= sheet.max_row:
         print(f"Цена элемента: {product_price}")
         sheet.cell(row=row_number, column=col_number).value = product_price
 
-        # 5. Тип товара (кол. №8)
-        col_number = 8
+        # 5. Тип товара (кол. №9)
+        col_number = 9
         container = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, ".product-attrs-block")))
         rows = container.find_elements(By.CSS_SELECTOR, ".attr-row")
@@ -219,9 +232,12 @@ while row_number <= sheet.max_row:
         else:
             print("! Тип товара не найден.")
 
-        # 6. Дополняем Наименование товара (кол. №7)
-        col_number = 7
+        # 6. Дополняем Наименование товара (кол. №8)
+        col_number = 8
         product_name = product_name.replace(collection, f"{collection} {product_type}")
+        if three_dplitka_brand:
+            product_name = product_name.replace(three_dplitka_brand, brand_ours)
+
         sheet.cell(row=row_number, column=col_number).value = product_name
         print(f"Название элемента дополненное: {product_name}")
 
