@@ -111,7 +111,7 @@ while row_number <= sheet.max_row:
             print(f"! Перезаписали: {new_property}")
             # continue
         if col_number == 42 and not exist_property:
-            new_property = "1"
+            new_property = 1
             sheet.cell(row=row_number, column=col_number).value = new_property
             print(f"! Перезаписали: {new_property}")
 
