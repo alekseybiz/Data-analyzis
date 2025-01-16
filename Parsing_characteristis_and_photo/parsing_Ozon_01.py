@@ -29,7 +29,7 @@ def get_description(product_name, property, variants, explanation):
     content = 'Ты должен дать четкий ответ на вопрос. Вот пояснения от ' + (
                 explanation or "нет пояснений") + '. Ответ предоставь в соответствии с пояснениями OZON: если допускается множественное значение, то перечисли значения используя разделитель "; ", выбери значения строго из списка: ' + (
                           variants or "нет вариантов") + '! А если нужно только одно значение, то выдай только одно значение. Если ' + (
-                          variants or "нет вариантов") + ' пусто, значит ответ может быть произвольным. Ответ должен содержать ТОЛЬКО итоговое значение или значения (если допускается множественный выбор)! Не пиши никаких комментариев, нужно ТОЛЬКО значение или значения!'
+                          variants or "нет вариантов") + ' пусто, значит ответ может быть произвольным. Ответ должен содержать ТОЛЬКО итоговое значение или значения (если допускается множественный выбор)! Не пиши никаких комментариев, нужно ТОЛЬКО значение или значения! Если ты не знаешь ответ, то в ответ не пиши НИЧЕГО! Не пиши в ответе "Пусто"'
 
     print(f"content: {content}")
 
@@ -61,8 +61,8 @@ def get_description(product_name, property, variants, explanation):
 workbook = openpyxl.load_workbook(excel_path)
 sheet = workbook.active
 
-col_numbers = [9, 10, 11, 12, 19, 20, 21, 22, 23, 24, 25, 28, 31, 32, 33, 34, 35, 36, 37, 40, 43, 45, 46, 47, 48, 49, 50, 51, 52]
-# col_numbers = [20]
+# col_numbers = [9, 10, 11, 12, 19, 20, 21, 22, 23, 24, 25, 28, 31, 32, 33, 34, 35, 36, 37, 40, 43, 45, 46, 47, 48, 49, 50, 51, 52]
+col_numbers = [41]
 
 
 # Проходим по всем строкам таблицы
@@ -85,6 +85,8 @@ while row_number <= sheet.max_row:
         explanation = sheet.cell(row=5, column=col_number).value
         # print(f"explanation: {explanation}")
         exist_property = sheet.cell(row=row_number, column=col_number).value
+        if exist_property == "Пусто" or exist_property == "пусто":
+            exist_property = ''
         print(f"exist_property: {exist_property}")
 
         if col_number in (24, 31, 33) and exist_property:
@@ -102,6 +104,12 @@ while row_number <= sheet.max_row:
                     # Записываем свойство только если замена выполнена
                     sheet.cell(row=row_number, column=col_number).value = new_property
                     print(f"! Перезаписали new_property: {new_property}")
+
+        if col_number == 41 and not exist_property:
+            new_property = f"Цена за упаковку. В упаковке {sheet.cell(row=row_number, column=21).value} штук."
+            sheet.cell(row=row_number, column=col_number).value = new_property
+            print(f"! Перезаписали: {new_property}")
+            continue
 
         if exist_property:
             continue
