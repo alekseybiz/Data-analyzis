@@ -126,13 +126,15 @@ while row_number <= sheet.max_row:
         # Записываем свойство:
         sheet.cell(row=row_number, column=col_number).value = description
 
+    if row_number % 30 == 0:
+        # print(f"{row_number} делится на 30 без остатка")
+        workbook.save(excel_path)
+        print(f"Данные стр. {row_number} сохранены в {excel_path}")
 
-    workbook.save(excel_path)
-    print(f"Данные стр. {row_number} сохранены в {excel_path}")
     row_number += 1
 
-# workbook.save(excel_path)
-# print(f"Данные стр. {row_number} сохранены в {excel_path}")
+workbook.save(excel_path)
+print(f"Данные стр. {row_number} сохранены в {excel_path}")
 
 
 
