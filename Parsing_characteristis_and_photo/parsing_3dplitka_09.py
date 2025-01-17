@@ -31,7 +31,7 @@ sheet = workbook.active
 
 
 # Проходим по всем строкам таблицы
-row_number = 43  # Начальный номер строки
+row_number = 45  # Начальный номер строки
 while row_number <= sheet.max_row:
     row = list(sheet.iter_rows(min_row=row_number, max_row=row_number))[0]  # Получаем текущую строку
     brand = row[5].value  # Значение из 6-го столбца ("Brand")
@@ -103,10 +103,6 @@ while row_number <= sheet.max_row:
     # Преобразуем множество обратно в список, если это нужно
     product_links = list(product_links)
 
-        #     product_links.append(product_href)  # Сохраняем ссылку
-        #     print(f"{index+1}. Ссылка на товар: {product_href}")
-        # except Exception as e:
-        #     print(f"Ошибка при извлечении ссылки из элемента {index}: {e}")
 
     # Переходим по каждой ссылке
     for index, product_href in enumerate(product_links):
