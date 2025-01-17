@@ -18,7 +18,7 @@ openai.api_key = api_key
 client = OpenAI(api_key=api_key)  # This is the default and can be omitted
 
 # Настройте путь к вашему файлу Excel
-excel_path = "Ozon/ОЗОН Equipe_готово.xlsx"
+excel_path = "Ozon/ОЗОН Equipe_try.xlsx"
 
 # Функция для нахождения характеристик от ChatGPT
 def get_description(product_name, property, variants, explanation):
@@ -61,8 +61,8 @@ def get_description(product_name, property, variants, explanation):
 workbook = openpyxl.load_workbook(excel_path)
 sheet = workbook.active
 
-# col_numbers = [9, 10, 11, 12, 19, 20, 21, 22, 23, 24, 25, 28, 31, 32, 33, 34, 35, 36, 37, 40, 43, 45, 46, 47, 48, 49, 50, 51, 52]
-col_numbers = [41, 42]
+# col_numbers = [9, 10, 11, 12, 19, 20, 21, 22, 23, 24, 25, 28, 31, 32, 33, 34, 35, 36, 40, 43, 45, 46, 47, 48, 49, 50, 51, 52]
+col_numbers = [36]
 
 
 # Проходим по всем строкам таблицы
@@ -85,6 +85,7 @@ while row_number <= sheet.max_row:
         explanation = sheet.cell(row=5, column=col_number).value
         # print(f"explanation: {explanation}")
         exist_property = sheet.cell(row=row_number, column=col_number).value
+        new_property = ""
         if exist_property == "Пусто" or exist_property == "пусто":
             exist_property = ""
         print(f"exist_property: {exist_property}")
@@ -120,8 +121,18 @@ while row_number <= sheet.max_row:
             continue
 
         description = get_description(product_name, property, variants, explanation)
-        print(f"description: {description}")
+        print(f"description сгенерировано: {description}")
 
+        # Удаляем из description значения, которых нет в variants
+        if variants:
+            # Преобразуем строки в списки
+            variants_list = [variant.strip() for variant in variants.split(";")]
+            description_list = [desc.strip() for desc in description.split(";")]
+            # Оставляем только те элементы из description, которые есть в variants
+            filtered_description = [desc for desc in description_list if desc in variants_list]
+            # Объединяем результат обратно в строку в description:
+            description = "; ".join(filtered_description)
+            print(f"description после чистки: {description}")
 
         # Записываем свойство:
         sheet.cell(row=row_number, column=col_number).value = description
