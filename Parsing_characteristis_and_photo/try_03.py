@@ -1,11 +1,12 @@
-# Vision OCR
-# Сервис распознавания текста на изображениях с помощью моделей машинного обучения
-# Импортируем необходимые библиотеки
-
 import base64
 import json
 import requests
-from PIL import Image, ImageDraw
+import numpy as np
+import cv2
+import torch
+import torch.optim as optim
+from PIL import Image
+from deep_image_prior import net
 from config import IAM_TOKEN  # Импорт вашего IAM токена
 
 # Идентификатор каталога
@@ -37,7 +38,7 @@ def get_watermark_coordinates(ocr_result, image_height, threshold=0.2):
     return None
 
 # Путь к файлу изображения
-file_path = "ocean-ceramic-120x278-statuario-super-120x278-sm-plitka.a718eb1e9358.jpg"  # Укажите путь к вашему файлу
+file_path = "new-trend-jast-60120jas11p-beige-polirovannyij-60x120-sm-plitka.5b2a4d059c77.jpg"  # Укажите путь к вашему файлу
 
 # Кодируем изображение в Base64
 content_base64 = encode_file(file_path)
@@ -71,11 +72,14 @@ else:
     print("Ошибка:", response.status_code, response.text)
     exit()
 
-# Открываем изображение
-image = Image.open(file_path)
-image_height = image.height  # Высота изображения
+# Чтение изображения с использованием OpenCV
+image = cv2.imread(file_path)
 
-# Получаем координаты водяного знака
+# Открываем изображение для дальнейшей обработки
+image_pil = Image.open(file_path)
+image_height = image_pil.height  # Высота изображения
+
+# Получаем координаты водяного знака из OCR
 coordinates = get_watermark_coordinates(ocr_result, image_height, threshold=0.2)
 
 if not coordinates:
@@ -84,20 +88,52 @@ if not coordinates:
 
 # Прямоугольная область водяного знака
 x_min = min(point["x"] for point in coordinates)
-y_min = min(point["y"] for point in coordinates) - 5
+y_min = min(point["y"] for point in coordinates) - 5  # немного увеличиваем область
 x_max = max(point["x"] for point in coordinates) + 5
-y_max = max(point["y"] for point in coordinates) + 5
+y_max = max(point["y"] for point in coordinates) + 9
 
-# Удаляем водяной знак
-try:
-    # Замена области белым цветом
-    draw = ImageDraw.Draw(image)
-    draw.rectangle([x_min, y_min, x_max, y_max], fill="white")
+# Замена области водяного знака с помощью инпейнтинга
+image_np = np.array(image_pil)
 
-    # Сохранение результата
-    output_path = "image_without_watermark.jpg"
-    image.save(output_path)
-    print(f"Водяной знак удалён, изображение сохранено: {output_path}")
+# Создаем маску для инпейнтинга, заполняя область водяного знака
+mask = np.zeros((image_height, image_pil.width), dtype=np.uint8)
+mask[y_min:y_max, x_min:x_max] = 255  # Маска для области водяного знака
 
-except Exception as e:
-    print(f"Ошибка при удалении водяного знака: {e}")
+# Применяем инпейтинг с использованием маски
+image_without_watermark = cv2.inpaint(image_np, mask, inpaintRadius=3, flags=cv2.INPAINT_TELEA)
+
+# Преобразуем изображение обратно в формат PIL для использования в DIP
+image_without_watermark_pil = Image.fromarray(image_without_watermark)
+
+# Преобразуем изображение в тензор PyTorch
+image_tensor = torch.from_numpy(image_without_watermark).float().permute(2, 0, 1) / 255.0
+image_tensor = image_tensor.unsqueeze(0)  # Добавляем размер батча
+
+# Инициализация модели Deep Image Prior
+model = net.DeepImagePrior()
+
+# Определим функцию потерь (например, MSE)
+criterion = torch.nn.MSELoss()
+
+# Оптимизатор
+optimizer = optim.Adam(model.parameters(), lr=0.1)
+
+# Обучаем модель для восстановления изображения без водяного знака
+for i in range(500):
+    optimizer.zero_grad()
+    output = model(image_tensor)
+    loss = criterion(output, image_tensor)
+    loss.backward()
+    optimizer.step()
+
+    if i % 50 == 0:
+        print(f"Iteration {i}, Loss: {loss.item()}")
+
+# Восстановленное изображение
+restored_image = output.squeeze().permute(1, 2, 0).detach().numpy() * 255
+restored_image = np.clip(restored_image, 0, 255).astype(np.uint8)
+
+# Сохраняем восстановленное изображение
+restored_image_pil = Image.fromarray(restored_image)
+restored_image_pil.save("restored_image_without_watermark.jpg")
+print("Водяной знак удалён, изображение восстановлено и сохранено.")
