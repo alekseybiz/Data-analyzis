@@ -10,7 +10,7 @@ from pathlib import Path
 # # Добавляем путь к корню проекта в sys.path
 # sys.path.append(str(project_root / "AI_genegator"))
 # # Теперь можно импортировать api_key из config
-from config import console_cloud_google_1, search_engine_id
+from config import console_cloud_google_API_1, search_engine_id
 
 
 # Установите ваш API-ключ OpenAI
@@ -18,10 +18,10 @@ from config import console_cloud_google_1, search_engine_id
 
 # excel_path = "for_parsing_try.xlsx"
 
-developer_KEY = console_cloud_google_1
+developer_KEY = console_cloud_google_API_1
 CX = search_engine_id
 
-query = "Belleza Denis Grande Shapetouch 60x120"
+query = "New Trend Fenomen 60120FEM15P Light Полированный 60x120"
 num_images = 7
 
 service = build("customsearch", "v1", developerKey=developer_KEY)
