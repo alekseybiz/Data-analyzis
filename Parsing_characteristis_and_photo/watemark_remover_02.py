@@ -1,23 +1,35 @@
-from diffusers import StableDiffusionInpaintPipeline
-import torch
-from PIL import Image
+import cv2
+import pytesseract
+from pytesseract import Output
 
-# Загружаем модель
-# pipe = StableDiffusionInpaintPipeline.from_pretrained("runwayml/stable-diffusion-inpainting", torch_dtype=torch.float16)
-# pipe = pipe.to("cuda")  # Используйте "cpu", если GPU недоступен
+# Укажите путь к Tesseract OCR, если требуется
+# pytesseract.pytesseract.tesseract_cmd = r'path_to_tesseract.exe'
 
-# Загрузка модели без float16
-pipe = StableDiffusionInpaintPipeline.from_pretrained(
-    "runwayml/stable-diffusion-inpainting"
-)
-pipe = pipe.to("cpu")
+# Загрузка изображения
+image_path = "vives-monocolor-octogono-negro-.f54e52ddaa08.jpg"
+image = cv2.imread(image_path)
 
-# Загрузка изображения и маски
-image = Image.open("new-trend-jast-60120jas11p-beige-polirovannyij-60x120-sm-plitka.5b2a4d059c77.jpg").convert("RGB")
-mask = Image.open("watermark_mask.jpg").convert("RGB")  # Белые области указывают на водяной знак
+# Преобразование в оттенки серого
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-# Удаление водяного знака
-result = pipe(prompt="Remove watermark", image=image, mask_image=mask).images[0]
+# Использование OCR для распознавания текста
+d = pytesseract.image_to_data(gray, output_type=Output.DICT)
 
-# Сохранение результата
-result.save("image_without_watermark.jpg")
+# Определение координат водяного знака
+for i in range(len(d['text'])):
+    if "3dplitka.ru" in d['text'][i]:  # Укажите текст водяного знака
+        x, y, w, h = d['left'][i], d['top'][i], d['width'][i], d['height'][i]
+        print(f"Watermark found at: x={x}, y={y}, width={w}, height={h}")
+
+        # Создание маски водяного знака
+        mask = cv2.rectangle(
+            np.zeros_like(gray),
+            (x, y),
+            (x + w, y + h),
+            (255, 255, 255),
+            thickness=-1
+        )
+
+        # Сохранение маски
+        cv2.imwrite("watermark_mask.jpg", mask)
+        break
