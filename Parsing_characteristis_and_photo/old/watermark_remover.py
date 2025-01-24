@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 # Загрузка изображения
-image = cv2.imread("new-trend-jast-60120jas11p-beige-polirovannyij-60x120-sm-plitka.5b2a4d059c77.jpg")
+image = cv2.imread("../new-trend-jast-60120jas11p-beige-polirovannyij-60x120-sm-plitka.5b2a4d059c77.jpg")
 
 # Преобразование в градации серого
 gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)

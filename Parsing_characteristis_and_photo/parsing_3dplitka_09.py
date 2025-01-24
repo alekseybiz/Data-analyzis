@@ -100,7 +100,7 @@ while row_number <= sheet.max_row:
                 print(f"{index + 1}. Уникальная ссылка на товар: {product_href}")
         except Exception as e:
             print(f"Ошибка при извлечении ссылки из элемента {index}: {e}")
-    # Преобразуем множество обратно в список, если это нужно
+    # Преобразуем множество обратно в список
     product_links = list(product_links)
 
 
