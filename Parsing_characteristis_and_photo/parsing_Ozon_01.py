@@ -18,7 +18,7 @@ openai.api_key = api_key
 client = OpenAI(api_key=api_key)  # This is the default and can be omitted
 
 # Настройте путь к вашему файлу Excel
-excel_path = "Ozon/Озон Керамин.xlsx"
+excel_path = "Ozon/Озон ИП 2025-01-22.xlsx"
 
 # Функция для нахождения характеристик от ChatGPT
 def get_description(product_name, property, variants, explanation):
@@ -74,7 +74,7 @@ while row_number <= sheet.max_row:
     if not product_name:
         row_number += 1
         continue
-    print(f"!!! Стр.{row_number}. товар: {product_name}")
+    print(f">>> Стр.{row_number}. товар: {product_name}")
 
 
     for col_number in col_numbers:
