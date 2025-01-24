@@ -184,7 +184,7 @@ while row_number <= sheet.max_row:
                         text = text.replace(" м2", "")
                         text = text.replace(" кг", "")
                         text = text.replace(" /", ",")
-                        text = text.capitalize()
+                        text = text.capitalize() #Делаем первую букву Заглавной
 
                         print(f"Значение для '{header_text}': {text}")
                         sheet.cell(row=row_number, column=col_number).value = text
