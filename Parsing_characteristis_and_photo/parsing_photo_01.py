@@ -147,7 +147,7 @@ while row_number <= sheet.max_row:
             print(f"Ошибка при обработке карусели: {e}")
             break
 
- 
+
 
 
 
