@@ -7,7 +7,7 @@ from openai import OpenAI
 # Установите ваш API-ключ OpenAI
 openai.api_key = api_key
 
-excel_path = "тексты коллекций_try.xlsx"
+excel_path = "Коллекции плитки_без РФ_export_699132896.xlsx"
 
 client = OpenAI(api_key=api_key)  # This is the default and can be omitted
 
@@ -74,6 +74,9 @@ try:
                 break  # Прерываем цикл при ошибке
             row[4].value = description  # Записываем описание в столбец "Описание"
         i += 1
+        if i % 10 == 0:
+            workbook.save(excel_path)
+            print(f"Описание сохранено в {excel_path}.")
 
 finally:
     # Сохраняем изменения в Excel-файле независимо от результата
