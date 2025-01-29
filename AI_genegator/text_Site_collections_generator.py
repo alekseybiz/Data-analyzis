@@ -59,9 +59,9 @@ try:
             collection = collection.capitalize()
         else:
             collection = ""
-        print(f"Бренд: {brand}, коллекция: {collection}")
+        # print(f"Бренд: {brand}, коллекция: {collection}")
         if collection:
-            print(f"{i}. Обрабатываю коллекцию: {collection}")
+            print(f">>>{i}. Обрабатываю Бренд: {brand}, коллекция: {collection}")
             try:
                 while True:  # Цикл для проверки и генерации текста
                     description = get_description(brand, collection)
@@ -76,7 +76,7 @@ try:
         i += 1
         if i % 10 == 0:
             workbook.save(excel_path)
-            print(f"Описание сохранено в {excel_path}.")
+            print(f">> Описание сохранено в {excel_path}.")
 
 finally:
     # Сохраняем изменения в Excel-файле независимо от результата
