@@ -7,15 +7,15 @@ from openai import OpenAI
 # Установите ваш API-ключ OpenAI
 openai.api_key = api_key
 
-excel_path = "Напольные_brands.xlsx"
+excel_path = "тексты_Фабрики_Напольные.xlsx"
 
 client = OpenAI(
     api_key=api_key,  # This is the default and can be omitted
 )
 
 # Функция для получения описания от ChatGPT
-def get_description(brand, country):
-    message = 'Напиши привлекательное описание для фабрики по производству напольных покрытий (ламинат, паркетная доска, кварцвиниловая плитка, инженерная доска и т.п.) ' + brand + ', расположенной в стране: ' + country
+def get_description(brand, razdel):
+    message = 'Напиши привлекательное описание для фабрики ' + brand + ' по производству напольных покрытий - ' + razdel + ', а также других, выпускаемых фабрикой напольных покрытий'
     print(message)
     content = 'Ты креативный копирайтер. Сделай описание фабрики: опиши ее особенности, особенности выпускаемой продукции. Можно вставить какие-то интересные факты о фабрике. Описание должно быть ярким и привлекать внимание. Добавь уникальности, пиши как топовый маркетолог, внеси в текст интересные факты. Пиши от третьего лица. Используй html-разметку, но не вставляй в описание "```html". Каждый абзац должен быть в каком-то html-теге. Все парные html-теги обязательно должны быть обязательно закрыты - проверь это в полученном тексте! Описание должно быть на 100% уникальное! Описание не должно быть заспамлено ключевыми словами! ' + brand + ' (название фабрики) - можно использовать в тексте не более 5 раз на оригинальном языке + можно транслитерировать бренд на русский язык и написать его еще не более трех раз. Не вставляй ссылки на сайты!'
     print(content)
@@ -43,26 +43,19 @@ def get_description(brand, country):
 # Открываем Excel-файл
 workbook = openpyxl.load_workbook(excel_path)
 sheet = workbook.active
-i = 0
+i = 1
 
 try:
     # Проход по строкам
     for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row, min_col=1, max_col=4):
         brand = row[2].value  # Значение из столбца "Бренд"
-        # if isinstance(brand, str) and brand:
-        #     brand = brand.capitalize()
-        # else:
-        #     brand = ""
-        country = row[1].value  # Значение из столбца "Страна"
-        # if isinstance(country, str) and country:
-        #     country = country.capitalize()
-        # else:
-        #     country = ""
+        razdel = row[1].value  # Значение из столбца "Название раздела"
+
 
         if brand:
             print(f">>>{i}. Обрабатываю фабрику - {brand}")
             try:
-                description = get_description(brand, country)
+                description = get_description(brand, razdel)
             except RuntimeError as e:
                 print(e)
                 break  # Прерываем цикл при ошибке
