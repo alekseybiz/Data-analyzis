@@ -17,7 +17,7 @@ webdriver_path = r"C:\Users\Administrator\Documents\install\chromedriver\chromed
 service = Service(webdriver_path)
 
 # Настройте путь к вашему файлу Excel
-excel_path = "parsing_3dplitka/Керам-Трейд 12.12.24.xlsx"
+excel_path = "parsing_3dplitka/Дон Керам 14.01.25.xlsx"
 
 # Инициализация браузера
 driver = webdriver.Chrome(service=service)
@@ -31,7 +31,7 @@ sheet = workbook.active
 
 
 # Проходим по всем строкам таблицы
-row_number = 45  # Начальный номер строки
+row_number = 8  # Начальный номер строки
 while row_number <= sheet.max_row:
     row = list(sheet.iter_rows(min_row=row_number, max_row=row_number))[0]  # Получаем текущую строку
     brand = row[5].value  # Значение из 6-го столбца ("Brand")
