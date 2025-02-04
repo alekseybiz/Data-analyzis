@@ -1,4 +1,4 @@
-import torch
-print(torch.cuda.is_available())
+from selenium import webdriver
+print(webdriver.Chrome().capabilities['browserVersion'])
 
 
