@@ -20,7 +20,7 @@ webdriver_path = r"C:\Users\Administrator\Documents\install\chromedriver\chromed
 service = Service(webdriver_path)
 
 # Настройте путь к вашему файлу Excel
-excel_path = "parsing_3dplitka/try.xlsx"
+excel_path = "../parsing_3dplitka/try.xlsx"
 
 # Инициализация браузера
 driver = webdriver.Chrome(service=service)
@@ -30,7 +30,7 @@ workbook = openpyxl.load_workbook(excel_path)
 sheet = workbook.active
 
 # Создаем папку для сохранения изображений
-os.makedirs("downloaded_images", exist_ok=True)
+os.makedirs("../downloaded_images", exist_ok=True)
 
 # Проходим по всем строкам таблицы
 row_number = 44  # Начальный номер строки
@@ -44,7 +44,7 @@ while row_number <= sheet.max_row:
         continue
 
     product_name = row[7].value  # Значение из 8-го столбца ("Наименование товара")
-    print(f">>>Стр.{row_number}. товар: {product_name}, бренд: {brand}")
+    print(f">>>Стр.{row_number}. товар: {product_name}")
     if not product_name:
         row_number += 1
         continue
@@ -52,42 +52,22 @@ while row_number <= sheet.max_row:
 
     # 1. Ищем картинки на https://www.bestceramic.ru/
     search_url = f"https://www.bestceramic.ru/search?q={product_name.replace(' ', '+')}"
-    driver.get(search_url) # Открываем страницу поиска
+    driver.get(search_url)
     collection_url = driver.current_url
     print(f"Открыт URL поиска: {collection_url}")
     time.sleep(3)  # Ожидание загрузки результатов
 
-    # Находим все блоки с классом "item item--product"
-    product_blocks = driver.find_elements(By.CSS_SELECTOR, ".item.item--product")
-    print(f"product_blocks: {product_blocks}")
-
-
-    # Перебираем найденные блоки и извлекаем данные
-    for block in product_blocks:
-        try:
-            # Извлекаем текст из <a class="item__title">
-            title_element = block.find_element(By.CSS_SELECTOR, "a.item__title")
-            title_text = title_element.text
-            print(f"Название: {title_text}")
-
-            # Извлекаем текст из <span class="markitem__content">
-            markitem_element = block.find_element(By.CSS_SELECTOR, "span.markitem__content")
-            brand_text = markitem_element.text
-            print(f"Бренд: {brand_text}")
-
-            # Находим <a> внутри карточки товара
-            link_element = block.find_element(By.CSS_SELECTOR, 'a[itemprop="url"]')
-            link = link_element.get_attribute("href")  # Извлекаем ссылку
-            print(f"Найдена ссылка: {link}")
-
-        except Exception as e:
-            print(f"Ошибка при обработке блока: {e}")
-
-        if brand_text.lower() == brand.lower() and collection.lower() in title_text.lower():
-            print(f"Найдено совпадение: {brand_text} и в названии коллекции {title_text} есть {collection}")
-            break
-
-
+    try:
+        result = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, ".item__head")))
+    except Exception as e:
+        print(f"! result не найден. Ошибка {e}")
+        row_number += 1
+        continue
+    # Находим <a> внутри карточки товара
+    link_element = result.find_element(By.CSS_SELECTOR, 'a[itemprop="url"]')
+    link = link_element.get_attribute("href")  # Извлекаем ссылку
+    print(f"Найдена ссылка: {link}")
     # Переходим по ссылке
     driver.get(link)
     print("Перешли по ссылке.")
@@ -96,6 +76,7 @@ while row_number <= sheet.max_row:
     # Извлечение всех превью изображений
     thumbnails = driver.find_elements(By.CSS_SELECTOR, ".product-slider__item img")
     print(f"thumbnails: {thumbnails}")
+
 
 
     # Сохранение уникальных URL-адресов изображений
@@ -122,13 +103,19 @@ while row_number <= sheet.max_row:
         # Скачиваем изображение
         response = requests.get(large_image_src)
         if response.status_code == 200:
-            with open(f"downloaded_images/{product_name}_{image_number}.jpg", "wb") as file:
+            with open(f"downloaded_images/image_{image_number}.jpg", "wb") as file:
                 file.write(response.content)
-            sheet.cell(row=row_number, column=44+image_number).value = f"downloaded_images/{product_name}_{image_number}.jpg"
             print(f"Изображение {image_number} сохранено.")
             image_number += 1
         else:
             print(f"Не удалось скачать изображение {image_number}.")
+
+
+
+
+
+
+
 
 
     # Сохраняем изменения в Excel

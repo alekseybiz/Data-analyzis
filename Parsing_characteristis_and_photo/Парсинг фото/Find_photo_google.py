@@ -59,7 +59,7 @@ display(df)
 df.to_csv("images_info.csv", index=False, encoding='utf-8')
 print("Информация об изображениях сохранена в images_info.csv")
 
-images_dir = "downloaded_images"
+images_dir = "../downloaded_images"
 os.makedirs(images_dir, exist_ok=True)
 
 def download_image(url, path):

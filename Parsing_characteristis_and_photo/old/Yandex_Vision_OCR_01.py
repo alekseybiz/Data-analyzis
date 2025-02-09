@@ -37,7 +37,7 @@ def get_watermark_coordinates(ocr_result, image_height, threshold=0.2):
     return None
 
 # Путь к файлу изображения
-file_path = "../new-trend-jast-60120jas11p-beige-polirovannyij-60x120-sm-plitka.5b2a4d059c77.jpg"  # Укажите путь к вашему файлу
+file_path = "../Парсинг фото/new-trend-jast-60120jas11p-beige-polirovannyij-60x120-sm-plitka.5b2a4d059c77.jpg"  # Укажите путь к вашему файлу
 
 # Кодируем изображение в Base64
 content_base64 = encode_file(file_path)
