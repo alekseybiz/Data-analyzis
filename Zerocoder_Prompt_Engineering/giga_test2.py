@@ -1,9 +1,9 @@
 """Пример обращения к GigaChat с помощью GigaChain"""
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_gigachat.chat_models import GigaChat
+from config import authorization_key
 
-authorization_key = "YWJkMDc5N2QtMzA3OC00Yjg3LWE2Y2EtYmQ3MzRkNDAxYTBiOjg4NjE3ZTQyLTg5NzktNGM3Ny1iY2EyLTM0ODQ5ZTNjZWZiNA=="
-# Авторизация в GigaChat
+
 model = GigaChat(
     credentials=authorization_key,
     scope="GIGACHAT_API_PERS",

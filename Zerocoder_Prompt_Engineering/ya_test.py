@@ -1,23 +1,8 @@
 import requests
-
-# Идентификатор ключа
-# ajejpvmr7on96tb2aoo5
-# Ваш секретный ключ
-# AQVN08_ts-LpN1YlYwVpmnruQRuvzfcqL98IvKJD
-
-# Идентификатор ключа
-# ajeo1l2imjc6d4mpjon2
-# Ваш секретный ключ
-# AQVN2A1FK02GaS2Z4uLuDEw4UepfLbiuhZbUfmbm
-
-# Идентификатор ключа
-# aje2krirv7oep28dbh78
-# Ваш секретный ключ
-# AQVNwqblv58OyJDVxOjpipaRWvNstY-MaAYCA0oX
+from config import api_url, api_key
 
 
-api_url = "https://llm.api.cloud.yandex.net/foundationModels/v1/completion"
-api_key = "AQVNwqblv58OyJDVxOjpipaRWvNstY-MaAYCA0oX"
+
 
 headers = {
     "Authorization": f"Api-key <api_key>",
