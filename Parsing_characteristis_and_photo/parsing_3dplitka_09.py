@@ -16,8 +16,8 @@ webdriver_path = r"C:\Users\Administrator\Documents\install\chromedriver\chromed
 # Настройка сервиса для драйвера Chrome
 service = Service(webdriver_path)
 
-# Настройте путь к вашему файлу Excel
-excel_path = "parsing_3dplitka/Новус 13.01.25.xlsx"
+# Сереж, Тут надо заменить название файла!!! Путь к файлу Excel:
+excel_path = "parsing_3dplitka/Лене 03.02.25-06.02.25.xlsx"
 
 # Инициализация браузера
 driver = webdriver.Chrome(service=service)
